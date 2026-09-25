@@ -1,0 +1,2833 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>XCAR — Аренда авто</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0b1f33">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="XCAR">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<style>
+body{margin:0;background:linear-gradient(180deg,#f5f7fa,#eef2f7);font-family:system-ui;display:flex;justify-content:center;padding:18px;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}
+input,textarea,select{-webkit-touch-callout:default;-webkit-user-select:text;user-select:text;}
+.card{width:100%;max-width:480px;background:#fff;padding:22px 18px 26px 18px;border-radius:20px;box-shadow:0 12px 35px rgba(0,0,0,.08);}
+
+.logo{text-align:center;font-size:32px;font-weight:900;cursor:pointer;user-select:none;transition:transform .15s ease;}
+.logo:active{transform:scale(.96);}
+.logo .x{color:#ff0000;}
+.logo .f{color:#001f5b;}
+
+.label{font-size:14px;font-weight:600;margin-top:12px;color:#2a2f36;display:flex;gap:8px;align-items:center;}
+.icon{opacity:.7}
+
+input,select{width:100%;padding:13px 14px;margin:6px 0 12px 0;font-size:16px;border-radius:14px;border:1px solid #e2e6ec;background:#f9fbfd;box-sizing:border-box;font-family:inherit;}
+
+button{width:100%;padding:14px;margin-top:9px;font-size:16px;font-weight:600;border:none;color:#fff;border-radius:14px;cursor:pointer;}
+.b1{background:#003049}.b7{background:#00c853}.b3{background:#6a5acd}
+#installBtn{display:none;background:#6a1b9a;}
+
+.btnRow{display:flex;gap:10px;}
+.btnRow button{margin-top:9px;}
+
+.result{margin-top:14px;padding:14px;background:#f3f6fb;font-weight:600;border-radius:14px;white-space:pre-line;}
+
+#dailyBreakdown{display:none;margin-top:14px;background:#fff;border-radius:14px;overflow:hidden;border:1px solid #e5e5e5;}
+#dailyBreakdown .dTitle{background:#001f5b;color:#fff;padding:12px;font-weight:700;font-size:14px;text-align:center;}
+.dayRow{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;font-size:13px;border-bottom:1px solid #eef1f5;}
+.dayRow:last-child{border-bottom:none;}
+.dayPaid{background:#e7f9ee;}
+.dayUnpaid{background:#fdeaea;}
+.dayPartial{background:#fff8e1;}
+.dayFree{background:#eef4ff;}
+.dayDate{font-weight:600;color:#1a1f29;}
+.dayAmount{font-weight:700;color:#2a2f36;}
+.dayStatus{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;}
+.dayPaid .dayStatus{background:#bdf0d1;color:#0a6b34;}
+.dayUnpaid .dayStatus{background:#f8c9c9;color:#a11414;}
+.dayPartial .dayStatus{background:#ffe082;color:#8a6100;}
+.dayFree .dayStatus{background:#dbe6ff;color:#0047ff;}
+.legend{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;padding:10px 14px 14px;font-size:11px;color:#5a6270;}
+.legendDot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;}
+.dotGreen{background:#22c55e;}
+.dotRed{background:#ef4444;}
+.dotYellow{background:#f5c518;}
+.dotBlue{background:#3b82f6;}
+.dailySummary{padding:12px 14px 4px;font-size:13px;font-weight:600;color:#1a1f29;white-space:pre-line;border-top:1px solid #eef1f5;}
+
+#reportBottom{margin-top:18px;background:#fff;padding-bottom:18px;border-radius:14px;overflow:hidden;position:relative;}
+table{width:100%;border-collapse:collapse;}
+th{background:#001f5b;color:#fff;padding:12px;}
+td{padding:12px;text-align:center;border-bottom:1px solid #e5e5e5;}
+.footer{text-align:center;font-size:10px;margin-top:14px;opacity:.85}
+
+.iosHint{display:none;margin-top:12px;padding:12px 14px;background:#fff8e1;border:1px solid #ffe0a3;border-radius:14px;font-size:13px;line-height:1.5;color:#5a4300;}
+
+.modalOverlay{display:none;position:fixed;inset:0;background:rgba(10,20,40,.55);backdrop-filter:blur(3px);z-index:999;justify-content:center;align-items:center;padding:20px;}
+.modalOverlay.open{display:flex;}
+.modalCard{width:100%;max-width:380px;background:#fff;border-radius:22px;padding:24px 20px 20px;box-shadow:0 20px 60px rgba(0,0,0,.25);position:relative;animation:popIn .22s ease;}
+@keyframes popIn{from{opacity:0;transform:scale(.9) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.modalTitle{text-align:center;font-size:20px;font-weight:800;color:#001f5b;margin-bottom:4px;}
+.modalSub{text-align:center;font-size:12px;color:#8a93a3;margin-bottom:18px;}
+.contactItem{display:flex;align-items:center;gap:12px;padding:14px;border-radius:16px;background:#f6f8fb;margin-bottom:10px;}
+.contactIcon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.contactInfo{flex:1;min-width:0;}
+.contactName{font-weight:700;font-size:14px;color:#1a1f29;}
+.contactPhone{font-size:13px;color:#4a5568;margin-top:2px;}
+.contactPhone a{color:#0047ff;text-decoration:none;font-weight:600;}
+.ci-x{background:linear-gradient(135deg,#ffdede,#ffbcbc);}
+.ci-car{background:linear-gradient(135deg,#dbeafe,#bfdbfe);}
+.ci-burger{background:linear-gradient(135deg,#fff3cd,#ffe69c);}
+.ci-person{background:linear-gradient(135deg,#e0e7ff,#c7d2fe);}
+.modalClose{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:#f0f2f6;border:none;font-size:16px;color:#5a6270;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+
+.settingsOpenBtn{width:100%;margin-top:4px;padding:13px 14px;border-radius:16px;border:1.5px dashed #c9d3e0;background:#fff;color:#2a2f36;font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s ease;}
+.settingsOpenBtn:active{background:#f3f6fb;}
+#settingsModal .modalCard{max-width:400px;max-height:86vh;overflow-y:auto;}
+.settingsSection{margin-top:6px;margin-bottom:18px;}
+.settingsSectionTitle{font-weight:800;font-size:13px;color:#1a1f29;margin-bottom:10px;}
+.billingModeRow{display:flex;gap:10px;}
+.billingModeOpt{flex:1;min-width:0;width:auto;background:#f6f8fb;border:1.5px solid #eef1f6;border-radius:16px;padding:14px 10px;text-align:center;cursor:pointer;font-family:inherit;transition:background .15s ease,border-color .15s ease;margin-top:0;color:inherit;}
+.billingModeOpt:active{background:#eef2f7;}
+.billingModeOpt.active{background:#eef4ff;border-color:#0047ff;}
+.billingModeIcon{font-size:22px;margin-bottom:6px;}
+.billingModeName{font-weight:800;font-size:12.5px;color:#1a1f29;}
+.billingModeDesc{font-size:10.5px;color:#8a93a3;margin-top:4px;line-height:1.4;font-weight:600;}
+.billingModeOpt.active .billingModeName{color:#0047ff;}
+.settingsBackupText{width:100%;box-sizing:border-box;min-height:110px;padding:12px;margin:10px 0 6px;font-size:12px;font-family:ui-monospace,monospace;border-radius:14px;border:1px solid #e2e6ec;background:#f9fbfd;resize:vertical;}
+.settingsBackupHint{font-size:11.5px;font-weight:700;color:#5a6270;min-height:15px;text-align:center;}
+.settingsSectionDesc{font-size:11.5px;font-weight:600;color:#8a93a3;margin:-4px 0 10px;line-height:1.4;}
+.authModeRow{display:flex;gap:8px;margin-bottom:10px;}
+.authModeOpt{flex:1;min-width:0;width:auto;padding:9px 10px;border-radius:12px;border:1.5px solid #eef1f6;background:#f6f8fb;font-weight:700;font-size:12.5px;color:#8a93a3;cursor:pointer;font-family:inherit;transition:background .15s ease,border-color .15s ease,color .15s ease;margin-top:0;}
+.authModeOpt:active{background:#eef2f7;}
+.authModeOpt.active{background:#eef4ff;border-color:#0047ff;color:#0047ff;}
+.serverProfileList{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
+.serverProfileItem{display:flex;flex-direction:column;gap:7px;padding:10px 11px;border-radius:14px;border:1.5px solid #eef1f6;background:#f6f8fb;transition:background .15s ease,border-color .15s ease;}
+.serverProfileItem.active{border-color:#0047ff;background:#eef4ff;}
+.serverProfileTop{display:flex;align-items:center;gap:8px;}
+.serverProfileDot{width:9px;height:9px;border-radius:50%;background:#c7cdd6;flex:0 0 auto;transition:background .2s ease;}
+.serverProfileDot.ok{background:#0a9a4a;}
+.serverProfileDot.err{background:#c62828;}
+.serverProfileDot.pending{background:#f0a500;animation:serverDotPulse 1s ease-in-out infinite;}
+@keyframes serverDotPulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+.serverProfileInfo{flex:1;min-width:0;}
+.serverProfileName{font-weight:800;font-size:13px;color:#1a2030;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.serverProfileUrl{font-size:10.5px;color:#8a93a3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;}
+.serverProfileBottom{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.serverProfilePing{font-size:10.5px;font-weight:700;color:#5a6270;min-height:13px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.serverProfileActions{display:flex;align-items:center;gap:5px;flex:0 0 auto;}
+.serverProfileIconBtn{width:27px;height:27px;border-radius:9px;border:1px solid #e2e6ec;background:#fff;font-size:12.5px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;margin-top:0;font-family:inherit;flex:0 0 auto;}
+.serverProfileIconBtn:active{background:#eef2f7;}
+.serverProfileUseBtn{width:auto;padding:7px 11px;margin-top:0;border-radius:10px;border:1.5px solid #0047ff;color:#0047ff;background:#fff;font-weight:800;font-size:11px;cursor:pointer;white-space:nowrap;font-family:inherit;flex:0 0 auto;}
+.serverProfileUseBtn.active{background:#0047ff;color:#fff;}
+.serverQuickAddRow{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
+.serverQuickAddBtn{width:auto;flex:1;min-width:88px;padding:9px 6px;margin-top:0;border-radius:12px;border:1.5px dashed #c9d3e6;background:#fff;color:#5a6270;font-weight:700;font-size:11px;cursor:pointer;font-family:inherit;}
+.serverQuickAddBtn:active{background:#f6f8fb;}
+.serverEditBox{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;padding:10px;border-radius:14px;background:#f6f8fb;border:1.5px solid #eef1f6;}
+.serverEmptyHint{font-size:11.5px;color:#8a93a3;text-align:center;padding:6px 0;}
+.updateAppBtn{border-color:#c9d9ff;color:#0047ff;box-shadow:0 2px 8px rgba(0,71,255,.1);}
+.updateAppBtn:active{background:#eef4ff;}
+.updateAppBtn .historyClearFill{background:#0047ff;}
+#updateOverlay{z-index:1002;}
+.updateAnimBox{text-align:center;}
+.updateRing{width:88px;height:88px;margin:0 auto 18px;border-radius:50%;border:5px solid rgba(255,255,255,.25);border-top-color:#fff;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:36px;animation:updateSpin .9s linear infinite;}
+@keyframes updateSpin{to{transform:rotate(360deg);}}
+.updateAnimText{font-weight:800;font-size:16px;color:#fff;margin-top:2px;}
+.updateAnimSub{font-size:12.5px;color:rgba(255,255,255,.72);margin-top:6px;}
+.pullRefreshIndicator{height:56px;margin-top:-56px;display:flex;align-items:center;justify-content:center;gap:7px;font-size:12px;font-weight:700;color:#0047ff;}
+.pullRefreshIndicator .spinning{display:inline-block;animation:pullSpin .7s linear infinite;}
+@keyframes pullSpin{to{transform:rotate(360deg);}}
+
+#rentModal,#completeRentModal,#deleteMonthModal{z-index:1000;}
+.rentFormRow{display:flex;gap:10px;}
+.rentFormRow input{flex:1;min-width:0;}
+
+#confirmModal{z-index:1001;}
+#confirmModal .modalCard{max-width:320px;text-align:center;}
+.confirmIcon{font-size:40px;margin-bottom:6px;animation:confirmPop .4s cubic-bezier(.34,1.56,.64,1);}
+@keyframes confirmPop{0%{transform:scale(.4) rotate(0deg);opacity:0;}55%{transform:scale(1.18) rotate(-10deg);opacity:1;}75%{transform:scale(.94) rotate(6deg);}100%{transform:scale(1) rotate(0deg);}}
+.confirmDangerBtn{background:#c62828;}
+.confirmDangerBtn:active{background:#a11414;}
+
+.topBar{position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:18px;}
+.gearBtn{position:absolute;right:0;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;border:none;background:#f1f4f8;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s ease,transform .15s ease;}
+.gearBtn:active{background:#e2e8f0;transform:translateY(-50%) scale(.92);}
+
+.navBtn{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;border:none;background:#f1f4f8;color:#001f5b;font-size:19px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s ease,transform .15s ease;font-family:inherit;}
+.navBtn:active{background:#e2e8f0;transform:translateY(-50%) scale(.92);}
+.navBtnLeft{left:0;}
+.navBtnRight{right:0;}
+
+.carPickerBtn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;margin:6px 0 12px 0;border-radius:14px;border:1px solid #e2e6ec;background:#f9fbfd;cursor:pointer;font-size:15px;font-family:inherit;text-align:left;box-sizing:border-box;transition:border-color .15s ease,background .15s ease;}
+.carPickerBtn:active{background:#f0f3f7;}
+.carPickerBtn .placeholder{color:#9aa3b0;font-weight:500;}
+.carPickerBtn .carPickerChosen{display:flex;align-items:center;gap:10px;min-width:0;}
+.carPickerBtn .carEmoji{font-size:19px;flex-shrink:0;}
+.carPickerBtn .carPickerText{min-width:0;}
+.carPickerBtn .carPickerName{font-weight:700;color:#1a1f29;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.carPickerBtn .carPickerPrice{font-weight:500;color:#7a8494;font-size:12px;margin-top:1px;}
+.carPickerBtn .chev{color:#9aa3b0;font-size:13px;flex-shrink:0;}
+
+.carListWrap{max-height:52vh;overflow-y:auto;margin:-4px 0 4px;}
+.page2Panel .carListWrap{max-height:none;overflow:visible;}
+.carItem{display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:16px;background:#f6f8fb;margin-bottom:8px;cursor:pointer;transition:background .12s ease;border:1.5px solid transparent;}
+.carItem:active{background:#eef2f7;}
+.carItem.selected{border-color:#0047ff;background:#eef4ff;}
+.carItemEmoji{width:38px;height:38px;border-radius:11px;background:#eef1f5;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.carItemInfo{flex:1;min-width:0;}
+.carItemName{font-weight:700;font-size:14px;color:#1a1f29;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.carItemPrice{font-size:12.5px;color:#7a8494;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.carEmptyState{text-align:center;color:#9aa3b0;font-size:13px;padding:24px 10px;}
+
+.carSettingsRow{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.carSettingsRow input{margin:0;padding:10px 12px;font-size:13.5px;border-radius:12px;}
+.carNameWrap{position:relative;flex:1.4;min-width:0;border-radius:14px;overflow:hidden;background:#f9fbfd;}
+.carEditName{width:100%;position:relative;z-index:1;background:transparent;box-sizing:border-box;}
+.carNameFill{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0;
+background:linear-gradient(90deg,#ef4444 0%,#f5c518 50%,#22c55e 100%);
+clip-path:inset(0 100% 0 0);transition:clip-path 1s linear,opacity .3s ease;}
+.carNameFill.active{opacity:.4;}
+.carEditPrice{flex:1;min-width:0;}
+.carDeleteBtn{flex-shrink:0;width:38px;height:38px;border-radius:11px;border:none;background:#fdeaea;color:#c62828;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.carDeleteBtn:active{background:#f8c9c9;}
+.page2HeaderBtns{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.carAddTopBtn{width:30px;height:30px;border-radius:50%;border:none;background:#0047ff;color:#fff;font-size:17px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s ease,transform .1s ease;box-shadow:0 2px 8px rgba(0,71,255,.35);}
+.carAddTopBtn:active{background:#0038cc;transform:scale(.94);}
+
+.historyHandle{position:fixed;left:0;top:50%;transform:translateY(-50%);width:6px;height:64px;background:#0047ff;border-radius:0 8px 8px 0;opacity:.35;z-index:900;transition:opacity .2s ease;}
+.historyOverlay{display:none;position:fixed;inset:0;background:rgba(6,12,28,.55);backdrop-filter:blur(2px);z-index:998;}
+.historyOverlay.open{display:block;}
+.historyDrawer{position:fixed;top:0;left:0;bottom:0;width:86%;max-width:340px;background:#f6f8fc;z-index:999;box-shadow:16px 0 46px rgba(0,10,40,.28);border-radius:0 28px 28px 0;overflow:hidden;transform:translateX(-100%);transition:transform .32s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;}
+.historyDrawer.open{transform:translateX(0);}
+.historyDrawer.dragging{transition:none;}
+
+.historyHeader{background:linear-gradient(135deg,#001f5b 0%,#0047a8 100%);padding:28px 20px 20px;flex-shrink:0;position:relative;overflow:hidden;}
+.historyHeader::after{content:"";position:absolute;width:170px;height:170px;background:rgba(255,255,255,.07);border-radius:50%;top:-95px;right:-55px;pointer-events:none;}
+.historyHeaderTop{display:flex;align-items:flex-start;justify-content:space-between;position:relative;z-index:1;}
+.historyTitle{font-size:19px;font-weight:800;color:#fff;letter-spacing:.2px;}
+.historySubtitle{font-size:11.5px;color:rgba(255,255,255,.68);margin-top:4px;font-weight:600;}
+.historyCloseBtn{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.16);border:none;font-size:14px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s ease;}
+.historyCloseBtn:active{background:rgba(255,255,255,.32);}
+
+.historyList{flex:1;overflow-y:auto;padding:16px 14px 6px;}
+.historyItem{background:#fff;border-radius:18px;padding:14px 40px 14px 14px;margin-bottom:12px;position:relative;z-index:0;cursor:pointer;transition:transform .12s ease,box-shadow .12s ease;box-shadow:0 2px 10px rgba(20,30,60,.06);border:1px solid #eef1f6;}
+.historyItem:active{transform:scale(.98);background:#fbfcfe;}
+.historyItem.holding{box-shadow:0 2px 14px rgba(0,71,255,.28);}
+.historyItemFill{position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:18px;
+background:linear-gradient(90deg,rgba(0,71,255,.16),rgba(0,71,255,.34));
+clip-path:inset(0 100% 0 0);}
+.historyItemRow{display:flex;gap:12px;}
+.historyAvatar{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,#eaf0ff,#dbe6ff);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
+.historyItemMain{flex:1;min-width:0;}
+.historyItemTop{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.historyItemCar{font-weight:800;font-size:14.5px;color:#12203c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.historyItemSum{font-weight:800;font-size:15px;white-space:nowrap;flex-shrink:0;color:#0047ff;}
+.historyItemSum.sumPaid{color:#0a9a4a;}
+.historyItemDate{font-size:11.5px;color:#8a93a3;margin-top:3px;font-weight:600;}
+.historyItemChips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.historyChip{background:#f1f4f9;color:#5a6270;font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;}
+.chipAccent{background:#e6edff;color:#0047ff;}
+.chipToday{background:#e7f9ee;color:#0a6b34;}
+.historyItemWhen{font-size:10px;color:#c1c7d1;margin-top:8px;font-weight:600;}
+.historyDeleteBtn{position:absolute;top:12px;right:10px;width:26px;height:26px;border-radius:50%;border:none;background:transparent;color:#c7cdd7;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s ease,color .15s ease;}
+.historyDeleteBtn:active{background:#fdeaea;color:#c62828;}
+.historyClearBtn{position:relative;overflow:hidden;display:block;width:fit-content;margin:4px auto 16px;padding:8px 18px;border-radius:999px;border:1.5px solid #f6cfcf;background:#fff;color:#c62828;font-weight:700;font-size:11px;cursor:pointer;transition:background .15s ease,transform .1s ease,box-shadow .15s ease;user-select:none;-webkit-user-select:none;touch-action:none;white-space:nowrap;box-shadow:0 2px 8px rgba(198,40,40,.08);}
+.historyClearBtn:active{background:#fdeaea;transform:scale(.96);}
+.historyClearBtn.holding{color:#fff;box-shadow:0 2px 10px rgba(198,40,40,.25);}
+.historyClearFill{position:absolute;left:0;top:0;bottom:0;width:0%;background:#c62828;z-index:0;}
+.historyClearLabelText{position:relative;z-index:1;}
+.historyEmpty{text-align:center;color:#9aa3b0;font-size:13px;padding:54px 20px;}
+.historyDayFolder{display:flex;align-items:center;gap:12px;background:#fff;border-radius:18px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:transform .12s ease,background .12s ease;box-shadow:0 2px 10px rgba(20,30,60,.06);border:1px solid #eef1f6;}
+.historyDayFolder:active{transform:scale(.98);background:#fbfcfe;}
+.historyDayFolderIcon{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,#eaf0ff,#dbe6ff);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
+.historyDayFolderInfo{flex:1;min-width:0;}
+.historyDayFolderDate{font-weight:800;font-size:14.5px;color:#1a2136;text-transform:capitalize;}
+.historyDayFolderCount{font-size:11.5px;color:#8a93a3;margin-top:2px;font-weight:600;}
+.historyDayFolderSum{font-weight:800;font-size:15px;color:#0a9a4a;white-space:nowrap;flex-shrink:0;}
+.historyDayBackRow{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.historyDayBackBtn{width:auto;flex-shrink:0;padding:9px 14px;border-radius:12px;border:none;background:#eef2f7;color:#1a2136;font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit;transition:background .15s ease;}
+.historyDayBackBtn:active{background:#e0e5ec;}
+.historyDayBackTitle{font-weight:800;font-size:15px;color:#1a2136;text-transform:capitalize;}
+.historyEmptyIcon{font-size:40px;margin-bottom:12px;opacity:.65;}
+
+.exportSquare,.exportSquare *{border-radius:0 !important;}
+.exportSquare #reportBottom{padding-bottom:40px;}
+.exportSquare .footer{
+position:absolute;left:0;right:0;bottom:0;
+display:flex;justify-content:center;align-items:center;
+height:40px;background:#ffffff;border-top:1px solid #e5e5e5;font-size:11px;
+}
+
+.page2Handle{position:fixed;right:0;top:50%;transform:translateY(-50%);width:6px;height:64px;background:#6a1b9a;border-radius:8px 0 0 8px;opacity:.35;z-index:900;transition:opacity .2s ease;}
+.page2Overlay{display:none;position:fixed;inset:0;background:rgba(6,12,28,.55);backdrop-filter:blur(2px);z-index:998;}
+.page2Overlay.open{display:block;}
+.page2Drawer{position:fixed;top:0;right:0;bottom:0;width:86%;max-width:340px;background:#f6f8fc;z-index:999;box-shadow:-16px 0 46px rgba(0,10,40,.28);border-radius:28px 0 0 28px;overflow:hidden;transform:translateX(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;}
+.page2Drawer.open{transform:translateX(0);}
+.page2Drawer.dragging{transition:none;}
+
+.page2Header{background:linear-gradient(135deg,#001f5b 0%,#3d2b7a 100%);padding:28px 20px 18px;flex-shrink:0;position:relative;overflow:hidden;}
+.page2Header::after{content:"";position:absolute;width:170px;height:170px;background:rgba(255,255,255,.07);border-radius:50%;top:-95px;left:-55px;pointer-events:none;}
+.page2HeaderTop{display:flex;align-items:flex-start;justify-content:space-between;position:relative;z-index:1;}
+.page2Title{font-size:19px;font-weight:800;color:#fff;letter-spacing:.2px;}
+.page2Subtitle{font-size:11.5px;color:rgba(255,255,255,.68);margin-top:4px;font-weight:600;}
+.page2CloseBtn{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.16);border:none;font-size:14px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s ease;}
+.page2CloseBtn:active{background:rgba(255,255,255,.32);}
+
+.page2Tabs{display:flex;gap:6px;padding:14px 14px 0;flex-shrink:0;background:#f6f8fc;}
+.page2Tab{flex:1;padding:10px 4px;border:none;background:#eef1f6;color:#7a8494;font-weight:700;font-size:11px;border-radius:14px;cursor:pointer;font-family:inherit;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;transition:background .15s ease,color .15s ease,box-shadow .15s ease;}
+.page2Tab .tabIcon{font-size:16px;}
+.page2Tab.active{background:#001f5b;color:#fff;box-shadow:0 6px 14px rgba(0,31,91,.28);}
+.page2Content{flex:1;overflow-y:auto;padding:16px 14px 6px;}
+.page2Panel{display:none;}
+.page2Panel.active{display:block;animation:page2FadeIn .18s ease;}
+@keyframes page2FadeIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
+.page2Hint{text-align:center;color:#b7bec9;font-size:11px;padding:10px 16px 16px;flex-shrink:0;font-weight:600;}
+
+.carManageCard{background:#fff;border-radius:18px;padding:12px 12px 4px;margin-bottom:10px;border:1px solid #eef1f6;box-shadow:0 2px 8px rgba(20,30,60,.05);}
+.carManageCard .carSettingsRow{margin-bottom:8px;}
+.rentSwitch{display:flex;align-items:center;justify-content:space-between;gap:9px;font-size:12.5px;color:#5a6270;font-weight:700;padding:9px 2px 10px;cursor:pointer;border-top:1px dashed #eef1f6;}
+.rentSwitch input{display:none;}
+.rentSwitchTrack{width:38px;height:22px;border-radius:20px;background:#e2e6ec;position:relative;transition:background .2s ease;flex-shrink:0;}
+.rentSwitchThumb{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s ease;}
+.rentSwitch input:checked ~ .rentSwitchTrack{background:#0047ff;}
+.rentSwitch input:checked ~ .rentSwitchTrack .rentSwitchThumb{transform:translateX(16px);}
+.carRentSince{font-size:11px;color:#9aa3b0;margin:-2px 2px 8px;font-weight:600;}
+
+.rentedCard{display:block;background:#fff;border:1px solid #eef1f6;box-shadow:0 2px 8px rgba(20,30,60,.05);}
+.rentedCardTop{display:flex;align-items:center;gap:12px;}
+.rentedCardInfo{flex:1;min-width:0;}
+.carReturnBtn{width:auto;flex-shrink:0;margin-top:0;padding:9px 14px;border-radius:12px;border:none;background:#e7f9ee;color:#0a6b34;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s ease;}
+.carReturnBtn:active{background:#bdf0d1;}
+.rentedAccruedBig{margin-top:10px;padding:10px 12px;background:linear-gradient(135deg,#eef4ff,#e3ecff);border-radius:13px;font-size:16px;font-weight:800;color:#0047ff;}
+.rentedAccruedBig span{display:block;font-size:10.5px;font-weight:700;color:#7a8494;margin-top:1px;}
+</style>
+</head>
+
+<body>
+<div class="card">
+
+<div class="topBar">
+<button type="button" id="navLeftBtn" class="navBtn navBtnLeft" title="История расчётов">‹</button>
+<div class="logo" id="logoBtn">Аренда авто <span class="x">X</span><span class="f">CAR</span></div>
+<button type="button" id="navRightBtn" class="navBtn navBtnRight" title="Меню">›</button>
+</div>
+
+<div class="modalOverlay" id="contactsModal">
+<div class="modalCard">
+<button class="modalClose" id="modalCloseBtn">✕</button>
+<div class="modalTitle">Контакты для связи</div>
+<div class="modalSub">Наши направления</div>
+
+<div class="contactItem">
+<div class="contactIcon ci-x">🕌</div>
+<div class="contactInfo">
+<div class="contactName">Исламская рассрочка X-FINANCE</div>
+<div class="contactPhone"><a href="tel:+79287390092">8 (928) 739-00-92</a></div>
+</div>
+</div>
+
+<div class="contactItem">
+<div class="contactIcon ci-car">🚗</div>
+<div class="contactInfo">
+<div class="contactName">Автопрокат XCAR</div>
+<div class="contactPhone">
+<a href="tel:+79287390092">8 (928) 739-00-92</a><br>
+<a href="tel:+79280014448">8 (928) 001-44-48</a>
+</div>
+</div>
+</div>
+
+<div class="contactItem">
+<div class="contactIcon ci-burger">🍔</div>
+<div class="contactInfo">
+<div class="contactName">VASABI — Бургерная</div>
+<div class="contactPhone"><a href="tel:+79280017548">8 (928) 001-75-48</a></div>
+</div>
+</div>
+
+<div class="contactItem">
+<div class="contactIcon ci-person">👤</div>
+<div class="contactInfo">
+<div class="contactName">Бечиев Идрис</div>
+<div class="contactPhone">С. Нижний Нойбер</div>
+</div>
+</div>
+
+<button type="button" class="settingsOpenBtn" id="settingsOpenBtn">⚙️ Настройки приложения</button>
+
+</div>
+</div>
+
+<div class="modalOverlay" id="settingsModal">
+<div class="modalCard">
+<button class="modalClose" id="settingsCloseBtn">✕</button>
+<div class="modalTitle">⚙️ Настройки</div>
+<div class="modalSub">Начисление аренды, аккаунт и резервная копия</div>
+
+<div class="settingsSection">
+<div class="settingsSectionTitle">Серверы</div>
+<div class="settingsSectionDesc">Сохраните несколько серверов (Render, домашний на Ubuntu и другие) и переключайтесь между ними</div>
+<div class="serverProfileList" id="serverProfileList"></div>
+<div class="serverQuickAddRow">
+<button type="button" class="serverQuickAddBtn" data-tpl="render">☁️ Render</button>
+<button type="button" class="serverQuickAddBtn" data-tpl="home">🏠 Домашний (Ubuntu)</button>
+<button type="button" class="serverQuickAddBtn" data-tpl="custom">➕ Другой</button>
+</div>
+<div class="serverEditBox" id="serverEditBox" style="display:none;">
+<input id="serverEditName" placeholder="Название сервера">
+<input id="serverEditUrl" placeholder="Адрес, например https://xcar.onrender.com">
+<div class="btnRow">
+<button type="button" class="b1" id="serverEditSaveBtn">Сохранить</button>
+<button type="button" class="b3" id="serverEditCancelBtn" style="background:#5a6270;">Отмена</button>
+</div>
+</div>
+<div class="btnRow">
+<button type="button" class="b3" id="serverPingAllBtn" style="background:#5a6270;">📶 Проверить все серверы</button>
+</div>
+<div class="settingsBackupHint" id="serverHint"></div>
+</div>
+
+<div class="settingsSection">
+<div class="settingsSectionTitle">Аккаунт и синхронизация с сервером</div>
+<div class="settingsSectionDesc" id="accountStatusLine">Работает без регистрации — данные хранятся только на этом устройстве</div>
+<input id="accountServerUrl" placeholder="Адрес сервера, например https://xcar.onrender.com">
+
+<div id="accountAuthBlock">
+<div class="authModeRow" id="authModeRow">
+<button type="button" class="authModeOpt active" id="authTabLogin" data-mode="login">Вход</button>
+<button type="button" class="authModeOpt" id="authTabRegister" data-mode="register">Регистрация</button>
+</div>
+<input id="accountUsername" placeholder="Логин" autocomplete="username">
+<input id="accountPassword" type="password" placeholder="Пароль" autocomplete="current-password">
+<div id="accountRegisterExtra" style="display:none;">
+<input id="accountEmail" type="email" placeholder="Email (необязательно)" autocomplete="email">
+<input id="accountPhone" type="tel" placeholder="Номер телефона (необязательно)" autocomplete="tel">
+</div>
+<div class="btnRow">
+<button type="button" class="b1" id="accountLoginBtn">🔑 Войти</button>
+<button type="button" class="b3" id="accountRegisterBtn" style="display:none;">✨ Зарегистрироваться</button>
+</div>
+</div>
+
+<div class="btnRow" id="accountConnectedBtnRow" style="display:none;">
+<button type="button" class="b1" id="accountSyncNowBtn">🔄 Синхронизировать</button>
+<button type="button" class="b3" id="accountLogoutBtn" style="background:#5a6270;">🚪 Выйти</button>
+</div>
+<label class="rentSwitch" id="pushToggleRow" style="display:none;">
+<input type="checkbox" id="pushToggleCheck">
+<span class="rentSwitchLabel">🔔 Push-уведомления о действиях на других устройствах</span>
+<span class="rentSwitchTrack"><span class="rentSwitchThumb"></span></span>
+</label>
+<button type="button" class="settingsOpenBtn" id="accountDeleteBtn" style="display:none;margin-top:8px;border-color:#f6cfcf;color:#c62828;">Удалить аккаунт с сервера</button>
+<div class="settingsBackupHint" id="accountHint"></div>
+</div>
+
+<div class="settingsSection">
+<div class="settingsSectionTitle">Начисление за активную аренду</div>
+<div class="billingModeRow">
+<button type="button" class="billingModeOpt" id="billingModePrepay" data-mode="prepay">
+<div class="billingModeIcon">📅</div>
+<div class="billingModeName">Предоплата за сутки</div>
+<div class="billingModeDesc">Сутки списываются сразу целиком с момента начала аренды</div>
+</button>
+<button type="button" class="billingModeOpt" id="billingModePersecond" data-mode="persecond">
+<div class="billingModeIcon">⏱️</div>
+<div class="billingModeName">Посекундно</div>
+<div class="billingModeDesc">Сумма начисляется непрерывно, в реальном времени</div>
+</button>
+</div>
+</div>
+
+<div class="settingsSection">
+<div class="settingsSectionTitle">Резервная копия — машины, история и настройки</div>
+<div class="btnRow">
+<button type="button" class="b1" id="settingsExportBtn">Экспортировать</button>
+<button type="button" class="b3" id="settingsImportBtn">Импортировать</button>
+</div>
+<textarea id="settingsBackupText" class="settingsBackupText" placeholder="Нажмите «Экспортировать», чтобы получить текст резервной копии, или вставьте сюда ранее сохранённый текст и нажмите «Импортировать»"></textarea>
+<div class="settingsBackupHint" id="settingsBackupHint"></div>
+</div>
+
+<button type="button" class="historyClearBtn updateAppBtn" id="updateAppBtn" style="margin:6px auto 4px;"><span class="historyClearFill"></span><span class="historyClearLabelText">🔄 Обновить приложение (удержать 2 сек)</span></button>
+
+</div>
+</div>
+
+<div class="modalOverlay" id="updateOverlay">
+<div class="updateAnimBox">
+<div class="updateRing">🚗</div>
+<div class="updateAnimText">Обновляем приложение…</div>
+<div class="updateAnimSub">Это займёт пару секунд</div>
+</div>
+</div>
+
+<div class="modalOverlay" id="carPickerModal">
+<div class="modalCard">
+<button class="modalClose" id="carPickerCloseBtn">✕</button>
+<div class="modalTitle">Выбор автомобиля</div>
+<div class="modalSub">Нажмите на машину, чтобы выбрать</div>
+<div class="carListWrap" id="carPickerList"></div>
+</div>
+</div>
+
+<div class="modalOverlay" id="rentModal">
+<div class="modalCard">
+<button class="modalClose" id="rentModalCloseBtn">✕</button>
+<div class="modalTitle">🔑 Оформление аренды</div>
+<div class="modalSub" id="rentModalCarName">Автомобиль</div>
+
+<div class="label"><span class="icon">🗓️</span>Начало аренды: дата и время</div>
+<div class="rentFormRow">
+<input type="date" id="rentStartDate">
+<input type="time" id="rentStartTime">
+</div>
+
+<div class="label"><span class="icon">🏁</span>Окончание: дата и время</div>
+<div class="rentFormRow">
+<input type="date" id="rentEndDate">
+<input type="time" id="rentEndTime">
+</div>
+
+<div class="label"><span class="icon">💰</span>Сумма за сутки и оплата при оформлении</div>
+<div class="rentFormRow">
+<input id="rentPricePerDay" inputmode="numeric" placeholder="₽/сутки">
+<input id="rentUpfrontPaid" inputmode="numeric" placeholder="Оплата">
+</div>
+
+<div class="btnRow">
+<button type="button" class="b1" id="rentCancelBtn" style="margin-top:16px;">Отмена</button>
+<button type="button" class="b7" id="rentSaveBtn" style="margin-top:16px;">Сохранить</button>
+</div>
+</div>
+</div>
+
+<div class="modalOverlay" id="completeRentModal">
+<div class="modalCard">
+<button class="modalClose" id="completeRentCloseBtn">✕</button>
+<div class="modalTitle">🏁 Завершить аренду</div>
+<div class="modalSub" id="completeRentCarName">Автомобиль</div>
+
+<div class="rentedAccruedBig" id="completeRentInfo" style="margin-top:2px;"></div>
+
+<div class="label"><span class="icon">💳</span>Сумма оплаты сейчас</div>
+<input id="completeRentPay" inputmode="numeric" placeholder="₽">
+
+<div class="btnRow">
+<button type="button" class="b1" id="completeRentCancelBtn" style="margin-top:16px;">Отмена</button>
+<button type="button" class="b7" id="completeRentSaveBtn" style="margin-top:16px;">Оплата</button>
+</div>
+</div>
+</div>
+
+<div class="modalOverlay" id="confirmModal">
+<div class="modalCard">
+<button class="modalClose" id="confirmModalCloseBtn">✕</button>
+<div class="confirmIcon" id="confirmIcon">🗑️</div>
+<div class="modalTitle" id="confirmTitle">Удалить?</div>
+<div class="modalSub" id="confirmMessage">Это действие нельзя отменить</div>
+<div class="btnRow">
+<button type="button" class="b1" id="confirmCancelBtn" style="margin-top:6px;">Отмена</button>
+<button type="button" class="b1 confirmDangerBtn" id="confirmOkBtn" style="margin-top:6px;">Удалить</button>
+</div>
+</div>
+</div>
+
+<div class="modalOverlay" id="deleteMonthModal">
+<div class="modalCard">
+<button class="modalClose" id="deleteMonthCloseBtn">✕</button>
+<div class="modalTitle">🗑️ Удалить историю</div>
+<div class="modalSub">Выберите месяц — месяцы удаляются по одному</div>
+<div id="deleteMonthList"></div>
+</div>
+</div>
+
+<div class="historyHandle" id="historyHandle"></div>
+<div class="historyOverlay" id="historyOverlay"></div>
+<div class="historyDrawer" id="historyDrawer">
+<div class="historyHeader">
+<div class="historyHeaderTop">
+<div>
+<div class="historyTitle">🕓 История расчётов</div>
+<div class="historySubtitle" id="historySubtitle">Всего записей: 0</div>
+</div>
+<button type="button" class="historyCloseBtn" id="historyCloseBtn">✕</button>
+</div>
+</div>
+<div class="historyList" id="historyList"></div>
+</div>
+
+<div class="page2Handle" id="page2Handle"></div>
+<div class="page2Overlay" id="page2Overlay"></div>
+<div class="page2Drawer" id="page2Drawer">
+<div class="page2Header">
+<div class="page2HeaderTop">
+<div>
+<div class="page2Title">✨ Меню</div>
+<div class="page2Subtitle" id="page2Subtitle">Автопарк и аренда</div>
+</div>
+<div class="page2HeaderBtns">
+<button type="button" class="carAddTopBtn" id="carAddTopBtn" title="Добавить автомобиль">+</button>
+<button type="button" class="page2CloseBtn" id="page2CloseBtn">✕</button>
+</div>
+</div>
+</div>
+<div class="page2Tabs">
+<button type="button" class="page2Tab active" id="page2TabFleet" data-tab="fleet"><span class="tabIcon">🚘</span>Автопарк</button>
+<button type="button" class="page2Tab" id="page2TabRented" data-tab="rented"><span class="tabIcon">🔑</span>В аренде</button>
+<button type="button" class="page2Tab" id="page2TabHistory" data-tab="history"><span class="tabIcon">🕓</span>История</button>
+</div>
+<div class="page2Content" id="page2Content">
+<div class="pullRefreshIndicator" id="pullRefreshIndicator"><span id="pullRefreshIcon">⬇️</span><span id="pullRefreshLabel">Потяните для синхронизации</span></div>
+
+<div class="page2Panel active" id="page2PanelFleet" data-panel="fleet">
+<div class="carListWrap" id="carManageList"></div>
+</div>
+
+<div class="page2Panel" id="page2PanelRented" data-panel="rented">
+<div class="carListWrap" id="rentedList"></div>
+</div>
+
+<div class="page2Panel" id="page2PanelHistory" data-panel="history">
+<div class="historyList" id="page2HistoryList"></div>
+<button type="button" class="historyClearBtn" id="page2HistoryClearBtn"><span class="historyClearFill"></span><span class="historyClearLabelText">🗑️ Очистить</span></button>
+</div>
+
+</div>
+<div class="page2Hint">Смахните вправо, чтобы вернуться к калькулятору</div>
+</div>
+
+<button id="installBtn">📲 Установить приложение</button>
+<div id="iosHint" class="iosHint">
+Чтобы установить на iPhone: нажмите кнопку «Поделиться» <b>⬆️</b> внизу Safari, затем выберите <b>«На экран Домой»</b>.
+</div>
+
+<div class="label"><span class="icon">🚘</span>Автомобиль</div>
+<button type="button" id="carPickerBtn" class="carPickerBtn">
+<div id="carPickerLabel" class="placeholder">— Выберите автомобиль —</div>
+<span class="chev">▾</span>
+</button>
+
+<div class="label"><span class="icon">💰</span>Цена за сутки</div>
+<input id="pricePerDay" inputmode="numeric">
+
+<div class="label"><span class="icon">⏱️</span>Цена за час</div>
+<input id="pricePerHour" inputmode="numeric">
+
+<div class="label"><span class="icon">🗓️</span>Дата начала</div>
+<input type="date" id="startDate">
+
+<div class="label"><span class="icon">🕘</span>Время начала <span style="font-weight:400;color:#9aa3b0;font-size:12px;">(необязательно)</span></div>
+<input type="time" id="startTime">
+
+<div class="label"><span class="icon">🗓️</span>Дата окончания</div>
+<input type="date" id="endDate">
+
+<div class="label"><span class="icon">🕕</span>Время окончания <span style="font-weight:400;color:#9aa3b0;font-size:12px;">(необязательно)</span></div>
+<input type="time" id="endTime">
+
+<div class="label"><span class="icon">📉</span>Старый долг</div>
+<input id="oldDebt" inputmode="numeric">
+
+<div class="label"><span class="icon">✅</span>Оплачено</div>
+<input id="paid" inputmode="numeric">
+
+<div id="result" class="result"></div>
+
+<div class="btnRow">
+<button class="b1" onclick="calculate()">Рассчитать</button>
+<button class="b3" onclick="showDetailed()">Детально</button>
+</div>
+<button class="b7" onclick="sendReport()">Отправить по WhatsApp</button>
+
+<div id="dailyBreakdown">
+<div class="dTitle">Детализация по дням</div>
+<div id="dailyList"></div>
+<div class="legend">
+<span><span class="legendDot dotGreen"></span>оплачено</span>
+<span><span class="legendDot dotYellow"></span>частично</span>
+<span><span class="legendDot dotRed"></span>не оплачено</span>
+</div>
+<div id="dailySummary" class="dailySummary"></div>
+<div class="footer">XCAR — Аренда автомобилей</div>
+</div>
+
+<div id="reportBottom">
+<table>
+<thead>
+<tr><th colspan="2">Аренда Авто <span style="color:#ff0000;">X</span><span style="color:#ffffff;">CAR</span></th></tr>
+<tr><th colspan="2" id="startInfoRow" style="background:#12315a;font-weight:500;font-size:12px;letter-spacing:.3px;padding:8px 12px;"></th></tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+<div class="footer">XCAR — Аренда автомобилей</div>
+</div>
+
+</div>
+
+<script>
+function num(v){return parseFloat((v||"").toString().replace(/\s/g,''))||0;}
+function space(n){return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g," ");}
+
+(function setDefaultDateTime(){
+const now=new Date();
+const pad=n=>("0"+n).slice(-2);
+const todayStr=now.getFullYear()+"-"+pad(now.getMonth()+1)+"-"+pad(now.getDate());
+const timeStr=pad(now.getHours())+":"+pad(now.getMinutes());
+document.getElementById("startDate").value=todayStr;
+document.getElementById("startTime").value=timeStr;
+document.getElementById("endTime").value=timeStr;
+document.getElementById("endDate").value="";
+})();
+
+["pricePerDay","pricePerHour","oldDebt","paid"].forEach(id=>{
+document.getElementById(id).addEventListener("input",e=>{
+let val=e.target.value.replace(/\D/g,'');
+e.target.value=space(val);
+});
+});
+
+// ---------- список автомобилей (выбор + управление) ----------
+const CAR_STORAGE_KEY="xcarCars";
+const DEFAULT_CARS=[
+{name:"Lada Vesta",price:2500,rented:false,rentedSince:null,rentedUntil:null,rentedPaid:0},
+{name:"Hyundai Solaris",price:3000,rented:false,rentedSince:null,rentedUntil:null,rentedPaid:0},
+{name:"Kia Rio",price:3200,rented:false,rentedSince:null,rentedUntil:null,rentedPaid:0},
+{name:"Toyota Camry",price:5000,rented:false,rentedSince:null,rentedUntil:null,rentedPaid:0},
+{name:"Ford Focus 3",price:6000,rented:false,rentedSince:null,rentedUntil:null,rentedPaid:0}
+];
+function loadCars(){
+try{
+const raw=localStorage.getItem(CAR_STORAGE_KEY);
+if(raw){
+const parsed=JSON.parse(raw);
+if(Array.isArray(parsed)&&parsed.length){
+parsed.forEach(c=>{
+if(typeof c.rented!=="boolean") c.rented=false;
+if(typeof c.rentedSince!=="string") c.rentedSince=null;
+if(typeof c.rentedUntil!=="string") c.rentedUntil=null;
+if(typeof c.rentedPaid!=="number") c.rentedPaid=0;
+if(c.rented&&!c.rentedSince) c.rentedSince=new Date().toISOString();
+});
+return parsed;
+}
+}
+}catch(e){}
+return DEFAULT_CARS.slice();
+}
+function saveCars(){
+try{localStorage.setItem(CAR_STORAGE_KEY, JSON.stringify(cars));}catch(e){}
+markDirty();
+}
+let cars=loadCars();
+let selectedCarIdx=null;
+
+// ---------- настройки приложения (способ начисления активной аренды) ----------
+const SETTINGS_KEY="xcarSettings";
+function defaultSettings(){
+return {billingMode:"prepay",account:{serverUrl:"",username:"",password:"",email:"",phone:"",connected:false},serverProfiles:[],activeServerProfileId:null,pushEnabled:false,pushEndpoint:""};
+}
+function loadSettings(){
+try{
+const raw=localStorage.getItem(SETTINGS_KEY);
+const parsed=raw?JSON.parse(raw):{};
+const acc=parsed.account&&typeof parsed.account==="object"?parsed.account:{};
+const profiles=Array.isArray(parsed.serverProfiles)?parsed.serverProfiles.filter(p=>p&&typeof p==="object"&&typeof p.id==="string"&&typeof p.url==="string").map(p=>({id:p.id,name:typeof p.name==="string"?p.name:"Сервер",url:p.url,ping:null})):[];
+return {
+billingMode:parsed.billingMode==="persecond"?"persecond":"prepay",
+account:{
+serverUrl:typeof acc.serverUrl==="string"?acc.serverUrl:"",
+username:typeof acc.username==="string"?acc.username:"",
+password:typeof acc.password==="string"?acc.password:"",
+email:typeof acc.email==="string"?acc.email:"",
+phone:typeof acc.phone==="string"?acc.phone:"",
+connected:!!acc.connected
+},
+serverProfiles:profiles,
+activeServerProfileId:typeof parsed.activeServerProfileId==="string"?parsed.activeServerProfileId:null,
+pushEnabled:!!parsed.pushEnabled,
+pushEndpoint:typeof parsed.pushEndpoint==="string"?parsed.pushEndpoint:""
+};
+}catch(e){return defaultSettings();}
+}
+function saveSettings(){
+try{localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));}catch(e){}
+}
+let settings=loadSettings();
+function markDirty(){
+try{localStorage.setItem("xcarLocalUpdatedAt", String(Date.now()));}catch(e){}
+}
+function getLocalUpdatedAt(){
+try{return parseInt(localStorage.getItem("xcarLocalUpdatedAt")||"0",10)||0;}catch(e){return 0;}
+}
+
+function updateCarPickerLabel(){
+const label=document.getElementById("carPickerLabel");
+const car=(selectedCarIdx!==null)?cars[selectedCarIdx]:null;
+if(!car){
+label.className="placeholder";
+label.textContent="— Выберите автомобиль —";
+}else{
+label.className="carPickerChosen";
+label.innerHTML=`<span class="carEmoji">🚗</span>`+
+`<span class="carPickerText">`+
+`<div class="carPickerName">${car.name}</div>`+
+`<div class="carPickerPrice">${space(car.price)} ₽/сутки</div>`+
+`</span>`;
+}
+}
+
+function renderCarPickerList(){
+const wrap=document.getElementById("carPickerList");
+wrap.innerHTML="";
+if(!cars.length){
+wrap.innerHTML=`<div class="carEmptyState"><div class="historyEmptyIcon">🚘</div>Список пуст.<br>Добавьте автомобиль в меню ›</div>`;
+return;
+}
+cars.forEach((c,i)=>{
+const item=document.createElement("div");
+item.className="carItem"+(i===selectedCarIdx?" selected":"");
+item.innerHTML=`<div class="carItemEmoji">🚗</div>`+
+`<div class="carItemInfo">`+
+`<div class="carItemName">${c.name}</div>`+
+`<div class="carItemPrice">${space(c.price)} ₽/сутки</div>`+
+`</div>`;
+item.addEventListener("click",()=>{
+selectedCarIdx=i;
+pricePerDay.value=space(c.price);
+updateCarPickerLabel();
+document.getElementById("carPickerModal").classList.remove("open");
+});
+wrap.appendChild(item);
+});
+}
+
+function updatePage2Subtitle(){
+const el=document.getElementById("page2Subtitle");
+if(!el) return;
+const rentedCount=cars.filter(c=>c.rented).length;
+el.textContent=`Машин: ${cars.length} · В аренде: ${rentedCount}`;
+}
+
+function renderCarManageList(){
+const wrap=document.getElementById("carManageList");
+wrap.innerHTML="";
+updatePage2Subtitle();
+if(!cars.length){
+wrap.innerHTML=`<div class="carEmptyState"><div class="historyEmptyIcon">🚘</div>Список пуст.<br>Добавьте первый автомобиль ниже</div>`;
+return;
+}
+cars.forEach((c,i)=>{
+const card=document.createElement("div");
+card.className="carManageCard";
+const safeName=c.name.replace(/"/g,"&quot;");
+const sinceText=(c.rented&&c.rentedSince)?`<div class="carRentSince">🕓 с ${fmtDateTime(new Date(c.rentedSince))}`+
+(c.rentedUntil?` · 🏁 до ${fmtDateTime(new Date(c.rentedUntil))}`:"")+
+(c.rentedPaid?` · внесено ${space(c.rentedPaid)} ₽`:"")+
+`</div>`:"";
+card.innerHTML=`<div class="carSettingsRow">`+
+`<div class="carNameWrap"><div class="carNameFill"></div><input class="carEditName" value="${safeName}"></div>`+
+`<input class="carEditPrice" inputmode="numeric" value="${space(c.price)}">`+
+`<button type="button" class="carDeleteBtn" title="Удалить">🗑️</button>`+
+`</div>`+
+`<label class="rentSwitch"><input type="checkbox" class="carRentCheck" ${c.rented?"checked":""}>`+
+`<span class="rentSwitchLabel">В аренде</span>`+
+`<span class="rentSwitchTrack"><span class="rentSwitchThumb"></span></span>`+
+`</label>`+
+sinceText;
+const nameInput=card.querySelector(".carEditName");
+const priceInput=card.querySelector(".carEditPrice");
+const rentCheck=card.querySelector(".carRentCheck");
+nameInput.addEventListener("input",()=>{
+cars[i].name=nameInput.value;
+saveCars();
+updateCarPickerLabel();
+});
+priceInput.addEventListener("input",e=>{
+let v=e.target.value.replace(/\D/g,'');
+e.target.value=space(v);
+cars[i].price=num(priceInput.value);
+saveCars();
+if(i===selectedCarIdx) pricePerDay.value=space(cars[i].price);
+updateCarPickerLabel();
+});
+rentCheck.addEventListener("change",()=>{
+if(rentCheck.checked){
+openRentModal(i);
+}else{
+openCompleteRentModal(i);
+}
+});
+card.querySelector(".carDeleteBtn").addEventListener("click",()=>{
+showConfirm({
+title:"Удалить автомобиль?",
+message:`«${c.name}» будет удалён из автопарка. Это действие нельзя отменить.`,
+confirmText:"Удалить",
+onConfirm:()=>{
+cars.splice(i,1);
+if(selectedCarIdx===i) selectedCarIdx=null;
+else if(selectedCarIdx!==null&&selectedCarIdx>i) selectedCarIdx--;
+saveCars();
+renderCarManageList();
+renderCarPickerList();
+renderRentedList();
+updateCarPickerLabel();
+}
+});
+});
+wrap.appendChild(card);
+});
+updateFleetRentProgress();
+}
+
+// заливка имени машины красный→жёлтый→зелёный по прогрессу текущих суток аренды (обновляется
+// без перерисовки всего списка, чтобы не сбивать фокус/курсор при вводе)
+function dayProgressPct(c){
+if(!c.rented||!c.rentedSince) return 0;
+const start=new Date(c.rentedSince);
+const now=new Date();
+let elapsedMs=now-start;
+if(!(elapsedMs>0)) elapsedMs=0;
+const totalHours=elapsedMs/3600000;
+const frac=totalHours-Math.floor(totalHours/24)*24;
+return Math.min(100,Math.max(0,(frac/24)*100));
+}
+function updateFleetRentProgress(){
+const wrap=document.getElementById("carManageList");
+if(!wrap) return;
+const cards=wrap.querySelectorAll(".carManageCard");
+cards.forEach((card,i)=>{
+const c=cars[i];
+const fill=card.querySelector(".carNameFill");
+if(!c||!fill) return;
+if(c.rented&&c.rentedSince){
+const pct=dayProgressPct(c);
+fill.classList.add("active");
+fill.style.clipPath=`inset(0 ${(100-pct).toFixed(2)}% 0 0)`;
+}else{
+fill.classList.remove("active");
+fill.style.clipPath="inset(0 100% 0 0)";
+}
+});
+}
+setInterval(updateFleetRentProgress,1000);
+
+function fmtDateTime(d){
+const pad=n=>("0"+n).slice(-2);
+return fmtDate(d)+" "+pad(d.getHours())+":"+pad(d.getMinutes());
+}
+
+// ---------- модалка оформления аренды ----------
+let rentModalCarIdx=null;
+const rentModal=document.getElementById("rentModal");
+function openRentModal(i){
+rentModalCarIdx=i;
+const c=cars[i];
+document.getElementById("rentModalCarName").textContent=c.name;
+const now=new Date();
+const pad=n=>("0"+n).slice(-2);
+document.getElementById("rentStartDate").value=now.getFullYear()+"-"+pad(now.getMonth()+1)+"-"+pad(now.getDate());
+document.getElementById("rentStartTime").value=pad(now.getHours())+":"+pad(now.getMinutes());
+document.getElementById("rentEndDate").value="";
+document.getElementById("rentEndTime").value="";
+document.getElementById("rentPricePerDay").value=space(c.price);
+document.getElementById("rentUpfrontPaid").value="";
+rentModal.classList.add("open");
+}
+function closeRentModal(revert){
+rentModal.classList.remove("open");
+rentModalCarIdx=null;
+if(revert) renderCarManageList();
+}
+["rentPricePerDay","rentUpfrontPaid"].forEach(id=>{
+document.getElementById(id).addEventListener("input",e=>{
+let v=e.target.value.replace(/\D/g,'');
+e.target.value=space(v);
+});
+});
+document.getElementById("rentModalCloseBtn").addEventListener("click",()=>closeRentModal(true));
+document.getElementById("rentCancelBtn").addEventListener("click",()=>closeRentModal(true));
+rentModal.addEventListener("click",e=>{
+if(e.target.id==="rentModal") closeRentModal(true);
+});
+document.getElementById("rentSaveBtn").addEventListener("click",()=>{
+if(rentModalCarIdx===null) return;
+const i=rentModalCarIdx;
+const sd=document.getElementById("rentStartDate").value;
+const st=document.getElementById("rentStartTime").value;
+if(!sd){alert("Укажите дату начала аренды");return;}
+const ed=document.getElementById("rentEndDate").value;
+const et=document.getElementById("rentEndTime").value;
+const priceVal=num(document.getElementById("rentPricePerDay").value);
+const paidVal=num(document.getElementById("rentUpfrontPaid").value);
+cars[i].rented=true;
+cars[i].rentedSince=new Date(sd+"T"+(st||"00:00")).toISOString();
+cars[i].rentedUntil=ed?new Date(ed+"T"+(et||"00:00")).toISOString():null;
+if(priceVal>0) cars[i].price=priceVal;
+cars[i].rentedPaid=paidVal;
+saveCars();
+notifyOtherDevices(`Машина «${cars[i].name}» оформлена в аренду`);
+if(i===selectedCarIdx) pricePerDay.value=space(cars[i].price);
+updateCarPickerLabel();
+rentModal.classList.remove("open");
+rentModalCarIdx=null;
+renderCarManageList();
+renderRentedList();
+});
+
+// сколько полных оплачиваемых суток накопилось у машины c к моменту atDate
+// (та же формула, что и в rentAccrual, просто вычисленная "на срез времени" atDate)
+function chargedDaysAsOf(c,atDate){
+const start=new Date(c.rentedSince);
+const elapsedMs=atDate-start;
+if(!(elapsedMs>0)) return 0;
+const totalHours=elapsedMs/3600000;
+return Math.max(1,Math.floor(totalHours/24));
+}
+
+function rentAccrual(c){
+const start=new Date(c.rentedSince);
+const now=new Date();
+let elapsedMs=now-start;
+if(!(elapsedMs>0)) elapsedMs=0;
+const totalHours=elapsedMs/3600000;
+const fullDays=Math.floor(totalHours/24);
+const remHours=totalHours-fullDays*24;
+const paid=c.rentedPaid||0;
+const startOfToday=new Date(now.getFullYear(),now.getMonth(),now.getDate(),0,0,0,0);
+
+if(settings.billingMode==="persecond"){
+// посекундное начисление: сумма растёт непрерывно и пропорционально прошедшему времени,
+// без деления на "сутки" — просто цена/сутки, размазанная по секундам
+const cost=elapsedMs/86400000*c.price;
+const remaining=Math.max(0,cost-paid);
+const overlapStart=start>startOfToday?start:startOfToday;
+const todayMs=Math.max(0,now-overlapStart);
+const today=todayMs/86400000*c.price;
+return {fullDays,remHours:Math.floor(remHours),cost,paid,remaining,today};
+}
+
+// сутки оплачиваются целиком с момента начала аренды (день 1 — сразу целиком);
+// текущие неполные вторые и следующие сутки — льготный период, бесплатно, пока не завершатся
+const chargedDays=Math.max(1,fullDays);
+const cost=chargedDays*c.price;
+const remaining=Math.max(0,cost-paid);
+// сумма за сегодня: сколько суток стало платным именно сегодня (считая с 00:00 текущего дня)
+const chargedBeforeToday=chargedDaysAsOf(c,startOfToday);
+const chargedNow=chargedDaysAsOf(c,now);
+const todayDays=Math.max(0,chargedNow-chargedBeforeToday);
+const today=todayDays*c.price;
+return {fullDays,remHours:Math.floor(remHours),cost,paid,remaining,today};
+}
+
+function renderRentedList(){
+const wrap=document.getElementById("rentedList");
+wrap.innerHTML="";
+const rentedCars=cars.map((c,i)=>({c,i})).filter(o=>o.c.rented);
+if(!rentedCars.length){
+wrap.innerHTML=`<div class="carEmptyState"><div class="historyEmptyIcon">🔑</div>Сейчас ни одна машина не в аренде</div>`;
+return;
+}
+rentedCars.forEach(({c,i})=>{
+const item=document.createElement("div");
+item.className="carItem rentedCard";
+const acc=c.rentedSince?rentAccrual(c):null;
+item.innerHTML=`<div class="rentedCardTop">`+
+`<div class="historyAvatar">🚗</div>`+
+`<div class="rentedCardInfo">`+
+`<div class="historyItemCar">${c.name}</div>`+
+`<div class="historyItemDate">${space(c.price)} ₽/сутки</div>`+
+`</div>`+
+`<button type="button" class="carReturnBtn">Вернули</button>`+
+`</div>`+
+(c.rentedSince?`<div class="historyItemChips">`+
+`<span class="historyChip">🕓 с ${fmtDateTime(new Date(c.rentedSince))}</span>`+
+(c.rentedUntil?`<span class="historyChip">🏁 до ${fmtDateTime(new Date(c.rentedUntil))}</span>`:"")+
+(acc?`<span class="historyChip chipAccent">⏳ ${acc.fullDays} дн. ${acc.remHours} ч.</span>`:"")+
+(acc?`<span class="historyChip chipToday">📅 За сегодня: ${space(acc.today)} ₽</span>`:"")+
+`</div>`:"")+
+(acc?`<div class="rentedAccruedBig">${space(acc.remaining)} ₽<span>${acc.paid>0?`к доплате · начислено ${space(acc.cost)} ₽, внесено ${space(acc.paid)} ₽`:"начислено на данный момент"}</span></div>`:"");
+item.querySelector(".carReturnBtn").addEventListener("click",()=>{
+openCompleteRentModal(i);
+});
+wrap.appendChild(item);
+});
+}
+setInterval(renderRentedList,1000);
+
+// ---------- модалка завершения аренды (оплата и долг) ----------
+let completeRentCarIdx=null;
+const completeRentModal=document.getElementById("completeRentModal");
+function openCompleteRentModal(i){
+completeRentCarIdx=i;
+const c=cars[i];
+const acc=rentAccrual(c);
+document.getElementById("completeRentCarName").textContent=c.name;
+document.getElementById("completeRentInfo").innerHTML=
+`${space(acc.cost)} ₽<span>начислено за всё время аренды${acc.paid>0?" · внесено ранее "+space(acc.paid)+" ₽":""}</span>`;
+document.getElementById("completeRentPay").value=space(Math.round(acc.remaining));
+completeRentModal.classList.add("open");
+}
+function closeCompleteRentModal(){
+completeRentModal.classList.remove("open");
+completeRentCarIdx=null;
+renderCarManageList();
+}
+document.getElementById("completeRentPay").addEventListener("input",e=>{
+let v=e.target.value.replace(/\D/g,'');
+e.target.value=space(v);
+});
+document.getElementById("completeRentCloseBtn").addEventListener("click",closeCompleteRentModal);
+document.getElementById("completeRentCancelBtn").addEventListener("click",closeCompleteRentModal);
+completeRentModal.addEventListener("click",e=>{
+if(e.target.id==="completeRentModal") closeCompleteRentModal();
+});
+document.getElementById("completeRentSaveBtn").addEventListener("click",()=>{
+if(completeRentCarIdx===null) return;
+const i=completeRentCarIdx;
+const c=cars[i];
+const acc=rentAccrual(c);
+const payNow=num(document.getElementById("completeRentPay").value);
+const totalPaid=acc.paid+payNow;
+const toPay=acc.cost-totalPaid;
+const startD=new Date(c.rentedSince);
+const now=new Date();
+const pad=n=>("0"+n).slice(-2);
+addHistoryEntry({
+car:c.name,
+start:fmtDateTime(startD),
+end:fmtDateTime(now),
+term:`${acc.fullDays} дн.${acc.remHours?" "+acc.remHours+" ч.":""}`,
+rentalSum:acc.cost,
+oldDebt:0,
+paid:totalPaid,
+toPay:toPay,
+raw:{
+carName:c.name,
+pricePerDay:c.price,
+pricePerHour:0,
+startDate:startD.getFullYear()+"-"+pad(startD.getMonth()+1)+"-"+pad(startD.getDate()),
+startTime:pad(startD.getHours())+":"+pad(startD.getMinutes()),
+oldDebt:0,
+paid:totalPaid
+},
+when:pad(now.getDate())+"."+pad(now.getMonth()+1)+" "+pad(now.getHours())+":"+pad(now.getMinutes()),
+dayKey:now.getFullYear()+"-"+pad(now.getMonth()+1)+"-"+pad(now.getDate())
+});
+cars[i].rented=false;
+cars[i].rentedSince=null;
+cars[i].rentedUntil=null;
+cars[i].rentedPaid=0;
+saveCars();
+notifyOtherDevices(`Машина «${c.name}» возвращена из аренды`);
+closeCompleteRentModal();
+renderCarManageList();
+renderRentedList();
+});
+
+// ---------- анимированное подтверждение удаления/очистки с вибро откликом ----------
+function vibrate(pattern){
+try{if(navigator.vibrate) navigator.vibrate(pattern);}catch(e){}
+}
+let confirmCallback=null;
+const confirmModal=document.getElementById("confirmModal");
+function showConfirm(opts){
+document.getElementById("confirmTitle").textContent=opts.title||"Удалить?";
+document.getElementById("confirmMessage").textContent=opts.message||"Это действие нельзя отменить";
+document.getElementById("confirmOkBtn").textContent=opts.confirmText||"Удалить";
+confirmCallback=opts.onConfirm||null;
+confirmModal.classList.add("open");
+const icon=document.getElementById("confirmIcon");
+icon.style.animation="none";
+void icon.offsetWidth;
+icon.style.animation="";
+vibrate(15);
+}
+function closeConfirm(){
+confirmModal.classList.remove("open");
+confirmCallback=null;
+}
+document.getElementById("confirmModalCloseBtn").addEventListener("click",closeConfirm);
+document.getElementById("confirmCancelBtn").addEventListener("click",closeConfirm);
+confirmModal.addEventListener("click",e=>{
+if(e.target.id==="confirmModal") closeConfirm();
+});
+document.getElementById("confirmOkBtn").addEventListener("click",()=>{
+const cb=confirmCallback;
+closeConfirm();
+vibrate([20,30,20]);
+if(cb) cb();
+});
+
+function addBlankCar(){
+cars.push({name:"Новый автомобиль",price:0,rented:false,rentedSince:null,rentedUntil:null,rentedPaid:0});
+saveCars();
+renderCarManageList();
+renderCarPickerList();
+vibrate(12);
+requestAnimationFrame(()=>{
+const wrap=document.getElementById("carManageList");
+const lastCard=wrap.lastElementChild;
+if(lastCard){
+lastCard.scrollIntoView({behavior:"smooth",block:"nearest"});
+const nameInput=lastCard.querySelector(".carEditName");
+if(nameInput){nameInput.focus();nameInput.select();}
+}
+});
+}
+document.getElementById("carAddTopBtn").addEventListener("click",addBlankCar);
+
+document.getElementById("carPickerBtn").addEventListener("click",()=>{
+renderCarPickerList();
+document.getElementById("carPickerModal").classList.add("open");
+});
+document.getElementById("carPickerCloseBtn").addEventListener("click",()=>{
+document.getElementById("carPickerModal").classList.remove("open");
+});
+document.getElementById("carPickerModal").addEventListener("click",e=>{
+if(e.target.id==="carPickerModal") e.target.classList.remove("open");
+});
+
+updateCarPickerLabel();
+
+// ---------- вкладки второй страницы (Автопарк / В аренде / История) ----------
+const page2Tabs=document.querySelectorAll(".page2Tab");
+const page2Panels=document.querySelectorAll(".page2Panel");
+function selectPage2Tab(tab){
+page2Tabs.forEach(btn=>btn.classList.toggle("active",btn.dataset.tab===tab));
+page2Panels.forEach(p=>p.classList.toggle("active",p.dataset.panel===tab));
+const addBtn=document.getElementById("carAddTopBtn");
+if(addBtn) addBtn.style.display=(tab==="fleet")?"flex":"none";
+if(tab==="fleet") renderCarManageList();
+if(tab==="rented") renderRentedList();
+if(tab==="history"){page2HistoryDay=null;renderHistory();}
+}
+page2Tabs.forEach(btn=>btn.addEventListener("click",()=>selectPage2Tab(btn.dataset.tab)));
+
+// ---------- история расчётов (свайп слева открывает, свайп вправо закрывает) ----------
+const HISTORY_KEY="xcarHistory";
+function loadHistory(){
+try{
+const raw=localStorage.getItem(HISTORY_KEY);
+const parsed=raw?JSON.parse(raw):[];
+if(!Array.isArray(parsed)) return [];
+// у старых записей (сохранённых до появления dayKey) проставляем настоящую дату один раз,
+// чтобы они не "зависали" отдельно от месяцев и корректно удалялись при очистке
+let changed=false;
+parsed.forEach(h=>{
+if(!h.dayKey){
+h.dayKey=historyDayKey(h);
+changed=true;
+}
+});
+if(changed){
+try{localStorage.setItem(HISTORY_KEY, JSON.stringify(parsed.slice(0,50)));}catch(e){}
+}
+return parsed;
+}catch(e){return [];}
+}
+function saveHistory(){
+try{localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0,50)));}catch(e){}
+markDirty();
+}
+let history=loadHistory();
+
+function isSameHistoryEntry(a,b){
+return a.car===b.car&&a.start===b.start&&a.end===b.end&&a.term===b.term&&
+a.rentalSum===b.rentalSum&&a.oldDebt===b.oldDebt&&a.paid===b.paid&&a.toPay===b.toPay;
+}
+function addHistoryEntry(entry){
+// не дублируем в истории один и тот же расчёт, если он совпадает с самой последней записью
+// (например, при повторном нажатии «Рассчитать» без изменения данных)
+const last=history[0];
+if(last&&isSameHistoryEntry(last,entry)) return;
+history.unshift(entry);
+saveHistory();
+renderHistory();
+}
+
+function buildHistoryList(list,filterFn,limit){
+list.innerHTML="";
+let indices=history.map((h,idx)=>idx).filter(idx=>!filterFn||filterFn(history[idx]));
+if(limit) indices=indices.slice(0,limit);
+if(!indices.length){
+list.innerHTML=`<div class="historyEmpty"><div class="historyEmptyIcon">🗂️</div>История пуста.<br>Она заполнится после первого расчёта</div>`;
+return;
+}
+indices.forEach(i=>{
+const h=history[i];
+const item=document.createElement("div");
+item.className="historyItem";
+const paidOff=h.toPay<=0;
+item.innerHTML=`<div class="historyItemFill"></div>`+
+`<button type="button" class="historyDeleteBtn" title="Удалить">🗑️</button>`+
+`<div class="historyItemRow">`+
+`<div class="historyAvatar">🚗</div>`+
+`<div class="historyItemMain">`+
+`<div class="historyItemTop">`+
+`<div class="historyItemCar">${h.car}</div>`+
+`<div class="historyItemSum${paidOff?' sumPaid':''}">${space(h.toPay)} ₽</div>`+
+`</div>`+
+`<div class="historyItemDate">🗓️ ${h.start}${h.end?" → "+h.end:""}</div>`+
+`<div class="historyItemChips">`+
+`<span class="historyChip">${h.term}</span>`+
+`<span class="historyChip">Оплачено ${space(h.paid)} ₽</span>`+
+(paidOff?`<span class="historyChip chipAccent">✓ оплачено</span>`:"")+
+`</div>`+
+`<div class="historyItemWhen">Расчёт: ${h.when}</div>`+
+`</div>`+
+`</div>`;
+item.querySelector(".historyDeleteBtn").addEventListener("click",(e)=>{
+e.stopPropagation();
+showConfirm({
+title:"Удалить запись?",
+message:`Расчёт «${h.car}» на ${space(h.toPay)} ₽ будет удалён из истории.`,
+confirmText:"Удалить",
+onConfirm:()=>{
+history.splice(i,1);
+saveHistory();
+renderHistory();
+}
+});
+});
+// восстановление в калькулятор только по удержанию 2 секунды (с эффектом заполнения),
+// чтобы случайное касание записи не перекидывало сразу в калькулятор
+(function attachHoldToRestore(){
+const RESTORE_HOLD_MS=2000;
+const fill=item.querySelector(".historyItemFill");
+let holdTimer=null,startX=0,startY=0;
+function cancelHold(){
+if(!holdTimer) return;
+clearTimeout(holdTimer);
+holdTimer=null;
+item.classList.remove("holding");
+fill.style.transition="clip-path .25s ease";
+fill.style.clipPath="inset(0 100% 0 0)";
+}
+function onMove(e){
+if(!holdTimer) return;
+const dx=Math.abs(e.clientX-startX),dy=Math.abs(e.clientY-startY);
+if(dx>10||dy>10) cancelHold();
+}
+item.addEventListener("pointerdown",e=>{
+if(e.target.closest(".historyDeleteBtn")) return;
+startX=e.clientX;startY=e.clientY;
+item.classList.add("holding");
+fill.style.transition="none";
+fill.style.clipPath="inset(0 100% 0 0)";
+void fill.offsetWidth;
+fill.style.transition=`clip-path ${RESTORE_HOLD_MS}ms linear`;
+requestAnimationFrame(()=>{fill.style.clipPath="inset(0 0% 0 0)";});
+vibrate(8);
+holdTimer=setTimeout(()=>{
+holdTimer=null;
+item.classList.remove("holding");
+vibrate([15,30,15]);
+restoreFromHistory(h);
+},RESTORE_HOLD_MS);
+});
+item.addEventListener("pointermove",onMove);
+item.addEventListener("pointerup",cancelHold);
+item.addEventListener("pointerleave",cancelHold);
+item.addEventListener("pointercancel",cancelHold);
+})();
+list.appendChild(item);
+});
+}
+
+function restoreFromHistory(h){
+if(!h.raw){alert("Для этой записи нет данных для восстановления");return;}
+const r=h.raw;
+const carIdx=r.carName?cars.findIndex(c=>c.name===r.carName):-1;
+selectedCarIdx=carIdx>=0?carIdx:null;
+pricePerDay.value=space(r.pricePerDay);
+pricePerHour.value=space(r.pricePerHour);
+startDate.value=r.startDate||"";
+startTime.value=r.startTime||"";
+oldDebt.value=space(r.oldDebt);
+paid.value=space(r.paid);
+const now=new Date();
+const pad=n=>("0"+n).slice(-2);
+endDate.value=now.getFullYear()+"-"+pad(now.getMonth()+1)+"-"+pad(now.getDate());
+endTime.value=pad(now.getHours())+":"+pad(now.getMinutes());
+updateCarPickerLabel();
+closeHistory();
+closePage2();
+calculate();
+}
+// ---------- группировка истории по дням (папки) для вкладки "История" в Меню ----------
+const RU_MONTHS=["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
+function historyDayKey(h){
+if(h.dayKey) return h.dayKey;
+const m=(h.when||"").match(/^(\d{2})\.(\d{2})/);
+if(m) return new Date().getFullYear()+"-"+m[2]+"-"+m[1];
+// совсем без даты (старые записи) — считаем сегодняшним днём, чтобы запись не "зависала"
+// вне месяцев и попадала в обычную очистку по месяцу
+const n=new Date();
+const p=x=>("0"+x).slice(-2);
+return n.getFullYear()+"-"+p(n.getMonth()+1)+"-"+p(n.getDate());
+}
+function dayKeyLabel(key){
+const parts=key.split("-");
+if(parts.length!==3) return "Без даты";
+const d=parseInt(parts[2],10),m=parseInt(parts[1],10)-1;
+return `${d} ${RU_MONTHS[m]||""}`;
+}
+function carsWord(n){
+const n10=n%10,n100=n%100;
+if(n100>=11&&n100<=14) return "записей";
+if(n10===1) return "запись";
+if(n10>=2&&n10<=4) return "записи";
+return "записей";
+}
+let page2HistoryDay=null;
+function renderPage2History(){
+const wrap=document.getElementById("page2HistoryList");
+const clearBtn=document.getElementById("page2HistoryClearBtn");
+wrap.innerHTML="";
+if(!history.length){
+wrap.innerHTML=`<div class="historyEmpty"><div class="historyEmptyIcon">🗂️</div>История пуста.<br>Она заполнится после первого расчёта</div>`;
+if(clearBtn) clearBtn.style.display="none";
+return;
+}
+if(page2HistoryDay===null){
+const groups=[];
+const byKey={};
+history.forEach(h=>{
+const key=historyDayKey(h);
+if(!byKey[key]){
+byKey[key]={key,total:0,count:0};
+groups.push(byKey[key]);
+}
+byKey[key].total+=(h.paid||0);
+byKey[key].count++;
+});
+groups.forEach(g=>{
+const folder=document.createElement("div");
+folder.className="historyDayFolder";
+folder.innerHTML=`<div class="historyDayFolderIcon">📅</div>`+
+`<div class="historyDayFolderInfo">`+
+`<div class="historyDayFolderDate">${dayKeyLabel(g.key)}</div>`+
+`<div class="historyDayFolderCount">${g.count} ${carsWord(g.count)}</div>`+
+`</div>`+
+`<div class="historyDayFolderSum">${space(g.total)} ₽</div>`;
+folder.addEventListener("click",()=>{
+page2HistoryDay=g.key;
+renderPage2History();
+});
+wrap.appendChild(folder);
+});
+if(clearBtn) clearBtn.style.display="";
+}else{
+const backRow=document.createElement("div");
+backRow.className="historyDayBackRow";
+backRow.innerHTML=`<button type="button" class="historyDayBackBtn">← Все дни</button>`+
+`<div class="historyDayBackTitle">${dayKeyLabel(page2HistoryDay)}</div>`;
+wrap.appendChild(backRow);
+backRow.querySelector(".historyDayBackBtn").addEventListener("click",()=>{
+page2HistoryDay=null;
+renderPage2History();
+});
+const dayList=document.createElement("div");
+wrap.appendChild(dayList);
+const dayKeySnapshot=page2HistoryDay;
+buildHistoryList(dayList,h=>historyDayKey(h)===dayKeySnapshot);
+if(clearBtn) clearBtn.style.display="none";
+}
+}
+
+const HISTORY_DRAWER_LIMIT=10;
+function renderHistory(){
+buildHistoryList(document.getElementById("historyList"),null,HISTORY_DRAWER_LIMIT);
+renderPage2History();
+const subEl=document.getElementById("historySubtitle");
+if(subEl){
+subEl.textContent=history.length>HISTORY_DRAWER_LIMIT
+?`Последние ${HISTORY_DRAWER_LIMIT} из ${history.length}`
+:`Всего записей: ${history.length}`;
+}
+}
+renderHistory();
+
+// ---------- удаление истории по месяцам: кнопку нужно удержать несколько секунд ----------
+const RU_MONTHS_NOM=["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
+function historyMonthKey(h){
+return historyDayKey(h).slice(0,7);
+}
+function monthKeyLabel(key){
+const parts=key.split("-");
+if(parts.length!==2) return "Без даты";
+const m=parseInt(parts[1],10)-1;
+return `${RU_MONTHS_NOM[m]||""} ${parts[0]}`;
+}
+const deleteMonthModal=document.getElementById("deleteMonthModal");
+function renderDeleteMonthList(){
+const wrap=document.getElementById("deleteMonthList");
+wrap.innerHTML="";
+if(!history.length){
+wrap.innerHTML=`<div class="historyEmpty">История уже пуста</div>`;
+return;
+}
+const groups=[];
+const byKey={};
+history.forEach(h=>{
+const key=historyMonthKey(h);
+if(!byKey[key]){byKey[key]={key,count:0,total:0};groups.push(byKey[key]);}
+byKey[key].count++;
+byKey[key].total+=(h.paid||0);
+});
+groups.forEach(g=>{
+const row=document.createElement("div");
+row.className="historyDayFolder";
+row.innerHTML=`<div class="historyDayFolderIcon">🗑️</div>`+
+`<div class="historyDayFolderInfo">`+
+`<div class="historyDayFolderDate">${monthKeyLabel(g.key)}</div>`+
+`<div class="historyDayFolderCount">${g.count} ${carsWord(g.count)}</div>`+
+`</div>`+
+`<div class="historyDayFolderSum" style="color:#c62828;">${space(g.total)} ₽</div>`;
+row.addEventListener("click",()=>{
+showConfirm({
+title:"Удалить месяц?",
+message:`Все записи за «${monthKeyLabel(g.key)}» (${g.count}) будут удалены. Это действие нельзя отменить.`,
+confirmText:"Удалить",
+onConfirm:()=>{
+history=history.filter(h=>historyMonthKey(h)!==g.key);
+saveHistory();
+renderHistory();
+renderDeleteMonthList();
+if(!history.length) deleteMonthModal.classList.remove("open");
+}
+});
+});
+wrap.appendChild(row);
+});
+}
+function openDeleteMonthModal(){
+if(!history.length) return;
+renderDeleteMonthList();
+deleteMonthModal.classList.add("open");
+}
+document.getElementById("deleteMonthCloseBtn").addEventListener("click",()=>deleteMonthModal.classList.remove("open"));
+deleteMonthModal.addEventListener("click",e=>{
+if(e.target.id==="deleteMonthModal") deleteMonthModal.classList.remove("open");
+});
+
+function attachHoldToClear(btnId,holdMs){
+const btn=document.getElementById(btnId);
+if(!btn) return;
+const fill=btn.querySelector(".historyClearFill");
+const labelEl=btn.querySelector(".historyClearLabelText");
+const restLabel=labelEl.textContent;
+let holdTimer=null,startTs=0,rafId=null;
+function tick(){
+if(!btn.classList.contains("holding")) return;
+const elapsed=Date.now()-startTs;
+const remain=Math.max(0,Math.ceil((holdMs-elapsed)/1000));
+labelEl.textContent=`Держите… ${remain} с`;
+rafId=requestAnimationFrame(tick);
+}
+function startHold(){
+if(!history.length) return;
+btn.classList.add("holding");
+startTs=Date.now();
+fill.style.transition="none";
+fill.style.width="0%";
+void fill.offsetWidth;
+fill.style.transition=`width ${holdMs}ms linear`;
+requestAnimationFrame(()=>{fill.style.width="100%";});
+vibrate(10);
+tick();
+holdTimer=setTimeout(finishHold,holdMs);
+}
+function resetVisual(){
+btn.classList.remove("holding");
+fill.style.transition="width .25s ease";
+fill.style.width="0%";
+labelEl.textContent=restLabel;
+}
+function cancelHold(){
+if(!holdTimer) return;
+clearTimeout(holdTimer);
+holdTimer=null;
+if(rafId){cancelAnimationFrame(rafId);rafId=null;}
+resetVisual();
+}
+function finishHold(){
+holdTimer=null;
+if(rafId){cancelAnimationFrame(rafId);rafId=null;}
+resetVisual();
+vibrate([20,40,20,40,20]);
+openDeleteMonthModal();
+}
+btn.addEventListener("pointerdown",e=>{e.preventDefault();startHold();});
+btn.addEventListener("pointerup",cancelHold);
+btn.addEventListener("pointerleave",cancelHold);
+btn.addEventListener("pointercancel",cancelHold);
+}
+attachHoldToClear("page2HistoryClearBtn",30000);
+
+const historyDrawer=document.getElementById("historyDrawer");
+const historyOverlay=document.getElementById("historyOverlay");
+function openHistory(){
+historyDrawer.classList.add("open");
+historyOverlay.classList.add("open");
+}
+function closeHistory(){
+historyDrawer.classList.remove("open");
+historyOverlay.classList.remove("open");
+}
+document.getElementById("historyHandle").addEventListener("click",openHistory);
+document.getElementById("historyCloseBtn").addEventListener("click",closeHistory);
+historyOverlay.addEventListener("click",()=>{
+if(window.__suppressOverlayClickUntil&&Date.now()<window.__suppressOverlayClickUntil) return;
+closeHistory();
+});
+document.getElementById("navLeftBtn").addEventListener("click",openHistory);
+
+// ---------- вторая страница (меню/настройки), открывается свайпом влево ----------
+const page2Drawer=document.getElementById("page2Drawer");
+const page2Overlay=document.getElementById("page2Overlay");
+function openPage2(){
+page2Drawer.classList.add("open");
+page2Overlay.classList.add("open");
+renderCarManageList();
+renderRentedList();
+renderHistory();
+}
+function closePage2(){
+page2Drawer.classList.remove("open");
+page2Overlay.classList.remove("open");
+}
+document.getElementById("page2Handle").addEventListener("click",openPage2);
+document.getElementById("page2CloseBtn").addEventListener("click",closePage2);
+page2Overlay.addEventListener("click",()=>{
+if(window.__suppressOverlayClickUntil&&Date.now()<window.__suppressOverlayClickUntil) return;
+closePage2();
+});
+document.getElementById("navRightBtn").addEventListener("click",openPage2);
+
+// свайп: от левого края экрана вправо — открыть историю; от правого края влево — открыть вторую страницу;
+// обратный свайп (когда открыта) — закрыть и вернуться к текущему расчёту
+(function setupSwipe(){
+let startX=0,startY=0,tracking=false,fromEdge=false,fromEdgeRight=false,gestureHandled=false;
+const EDGE_ZONE=28,THRESHOLD=60;
+
+function onStart(x,y){
+startX=x;startY=y;
+tracking=true;
+gestureHandled=false;
+fromEdge=startX<=EDGE_ZONE;
+fromEdgeRight=startX>=window.innerWidth-EDGE_ZONE;
+}
+function onMove(x,y){
+if(!tracking) return;
+const dx=x-startX,dy=y-startY;
+if(Math.abs(dx)<Math.abs(dy)) return; // вертикальная прокрутка — игнор
+const historyOpen=historyDrawer.classList.contains("open");
+const page2Open=page2Drawer.classList.contains("open");
+if(!historyOpen&&!page2Open&&fromEdge&&dx>0){
+gestureHandled=true;
+historyDrawer.classList.add("dragging");
+const shift=Math.min(dx,340);
+historyDrawer.style.transform=`translateX(${shift-340}px)`;
+historyOverlay.classList.add("open");
+}else if(historyOpen&&dx<0){
+gestureHandled=true;
+historyDrawer.classList.add("dragging");
+const shift=Math.max(dx,-340);
+historyDrawer.style.transform=`translateX(${shift}px)`;
+}else if(!historyOpen&&!page2Open&&fromEdgeRight&&dx<0){
+gestureHandled=true;
+page2Drawer.classList.add("dragging");
+const shift=Math.max(dx,-340);
+page2Drawer.style.transform=`translateX(${shift+340}px)`;
+page2Overlay.classList.add("open");
+}else if(page2Open&&dx>0){
+gestureHandled=true;
+page2Drawer.classList.add("dragging");
+const shift=Math.min(dx,340);
+page2Drawer.style.transform=`translateX(${shift}px)`;
+}
+}
+function onEnd(x){
+if(!tracking) return;
+tracking=false;
+historyDrawer.classList.remove("dragging");
+historyDrawer.style.transform="";
+page2Drawer.classList.remove("dragging");
+page2Drawer.style.transform="";
+const dx=x-startX;
+const historyOpen=historyDrawer.classList.contains("open");
+const page2Open=page2Drawer.classList.contains("open");
+if(!historyOpen&&!page2Open&&fromEdge&&dx>THRESHOLD){
+openHistory();
+}else if(historyOpen&&dx<-THRESHOLD){
+closeHistory();
+}else if(!historyOpen&&!page2Open&&fromEdgeRight&&dx<-THRESHOLD){
+openPage2();
+}else if(page2Open&&dx>THRESHOLD){
+closePage2();
+}else{
+if(!historyOpen) historyOverlay.classList.remove("open");
+if(!page2Open) page2Overlay.classList.remove("open");
+}
+// на реальном свайпе браузер может выстрелить "призрачный" клик по элементу
+// под курсором сразу после отпускания (особенно заметно с мышью) — на короткое
+// время игнорируем клики по оверлеям, чтобы это не выглядело как отмена действия
+if(gestureHandled){
+window.__suppressOverlayClickUntil=Date.now()+450;
+}
+gestureHandled=false;
+}
+
+document.addEventListener("touchstart",e=>{
+const t=e.touches[0];
+onStart(t.clientX,t.clientY);
+},{passive:true});
+document.addEventListener("touchmove",e=>{
+const t=e.touches[0];
+onMove(t.clientX,t.clientY);
+},{passive:true});
+document.addEventListener("touchend",e=>{
+const t=e.changedTouches[0];
+onEnd(t.clientX);
+});
+
+// поддержка свайпа мышью (для тестирования на компьютере) — те же пороги,
+// но без реакции на обычные клики: жест засчитывается только при реальном движении
+let mouseDown=false;
+document.addEventListener("mousedown",e=>{
+if(e.button!==0) return;
+mouseDown=true;
+onStart(e.clientX,e.clientY);
+});
+document.addEventListener("mousemove",e=>{
+if(!mouseDown) return;
+onMove(e.clientX,e.clientY);
+});
+document.addEventListener("mouseup",e=>{
+if(!mouseDown) return;
+mouseDown=false;
+onEnd(e.clientX);
+});
+})();
+
+function fmtHistoryDateTime(dateStr,timeStr){
+if(!dateStr) return "";
+const d=new Date(dateStr+"T00:00");
+return fmtDate(d)+(timeStr?" "+timeStr:"");
+}
+
+function getDuration(){
+if(!startDate.value||!endDate.value){
+alert("Заполните дату начала и окончания");
+return null;
+}
+const hasTime=!!(startTime.value&&endTime.value);
+let start,end;
+if(hasTime){
+start=new Date(startDate.value+"T"+startTime.value);
+end=new Date(endDate.value+"T"+endTime.value);
+}else{
+start=new Date(startDate.value+"T00:00");
+end=new Date(endDate.value+"T00:00");
+}
+const diffMs=end-start;
+if(diffMs<0){alert("Дата/время окончания должны быть позже начала");return null;}
+
+if(hasTime){
+if(diffMs===0){alert("Дата/время окончания должны быть позже начала");return null;}
+const totalHoursExact=diffMs/3600000;
+const totalHoursCeil=Math.ceil(totalHoursExact-1e-9);
+const fullDays=Math.floor(totalHoursCeil/24);
+const remHours=totalHoursCeil-fullDays*24;
+return {fullDays,remHours,hasTime,start,end};
+}else{
+const fullDays=Math.round(diffMs/86400000);
+if(fullDays<=0){alert("Дата окончания должна быть позже даты начала");return null;}
+return {fullDays,remHours:0,hasTime,start,end};
+}
+}
+
+function fmtDate(d){
+return ("0"+d.getDate()).slice(-2)+"."+("0"+(d.getMonth()+1)).slice(-2)+"."+d.getFullYear();
+}
+
+function calculate(){
+const dayPrice=num(pricePerDay.value);
+const hourPrice=num(pricePerHour.value);
+const oldDebtVal=num(oldDebt.value);
+const paidVal=num(paid.value);
+
+const dur=getDuration();
+if(!dur) return;
+const {fullDays,remHours}=dur;
+
+// сутки оплачиваются целиком; если аренда уже началась (есть хотя бы 1 полная сутки),
+// то "хвост" во второй/следующие сутки, пока они не станут полными, — бесплатно.
+// почасовая цена используется только когда вся аренда короче одних суток.
+const rentalSum=fullDays*dayPrice+(fullDays===0?remHours*hourPrice:0);
+const totalWithDebt=rentalSum+oldDebtVal;
+const toPay=totalWithDebt-paidVal;
+
+result.innerText=
+`Срок аренды: ${fullDays} дн.${remHours?" "+remHours+" ч.":""}\n`+
+`Сумма за аренду: ${space(rentalSum)} ₽\n`+
+`Старый долг: ${space(oldDebtVal)} ₽\n`+
+`Оплачено: ${space(paidVal)} ₽\n`+
+`Итого к оплате: ${space(toPay)} ₽`;
+
+tableBody.innerHTML="";
+const startInfoRow=document.getElementById("startInfoRow");
+if(startInfoRow){
+const startStr=fmtHistoryDateTime(startDate.value,startTime.value);
+const endStr=fmtHistoryDateTime(endDate.value,endTime.value);
+startInfoRow.textContent=endStr?`${startStr} → ${endStr}`:startStr;
+}
+const rows=[
+["Автомобиль", (selectedCarIdx!==null&&cars[selectedCarIdx])?cars[selectedCarIdx].name:"—"],
+["Срок аренды", `${fullDays} дн.${remHours?" "+remHours+" ч.":""}`],
+["Сумма за аренду", space(rentalSum)+" ₽"],
+["Старый долг", space(oldDebtVal)+" ₽"],
+["Оплачено", space(paidVal)+" ₽"],
+["Итого к оплате", space(toPay)+" ₽"]
+];
+rows.forEach(r=>{
+let tr=document.createElement("tr");
+tr.innerHTML=`<td>${r[0]}</td><td>${r[1]}</td>`;
+tableBody.appendChild(tr);
+});
+
+document.getElementById("dailyBreakdown").style.display="none";
+
+addHistoryEntry({
+car:(selectedCarIdx!==null&&cars[selectedCarIdx])?cars[selectedCarIdx].name:"—",
+start:fmtHistoryDateTime(startDate.value,startTime.value),
+end:fmtHistoryDateTime(endDate.value,endTime.value),
+term:`${fullDays} дн.${remHours?" "+remHours+" ч.":""}`,
+rentalSum:rentalSum,
+oldDebt:oldDebtVal,
+paid:paidVal,
+toPay:toPay,
+raw:{
+carName:(selectedCarIdx!==null&&cars[selectedCarIdx])?cars[selectedCarIdx].name:null,
+pricePerDay:dayPrice,
+pricePerHour:hourPrice,
+startDate:startDate.value,
+startTime:startTime.value,
+oldDebt:oldDebtVal,
+paid:paidVal
+},
+when:(()=>{const n=new Date();const p=x=>("0"+x).slice(-2);return p(n.getDate())+"."+p(n.getMonth()+1)+" "+p(n.getHours())+":"+p(n.getMinutes());})(),
+dayKey:(()=>{const n=new Date();const p=x=>("0"+x).slice(-2);return n.getFullYear()+"-"+p(n.getMonth()+1)+"-"+p(n.getDate());})()
+});
+}
+
+function showDetailed(){
+const dayPrice=num(pricePerDay.value);
+const hourPrice=num(pricePerHour.value);
+const oldDebtVal=num(oldDebt.value);
+const paidVal=num(paid.value);
+
+const dur=getDuration();
+if(!dur) return;
+const {fullDays,remHours,start,end,hasTime}=dur;
+
+// строим список дней: fullDays полных суток + (если есть) последний "хвост" в часах
+const days=[];
+for(let i=0;i<fullDays;i++){
+let d=new Date(start);
+d.setDate(d.getDate()+i);
+days.push({
+dateObj:d,
+label:fmtDate(d),
+amount:dayPrice
+});
+}
+if(remHours>0){
+let d=new Date(start);
+d.setDate(d.getDate()+fullDays);
+const isFree=fullDays>0;
+days.push({
+dateObj:d,
+label:fmtDate(d)+` (${remHours} ч.)`+(isFree?" · льготный период":""),
+amount:isFree?0:remHours*hourPrice,
+free:isFree
+});
+}
+
+// оплата распределяется по дням аренды начиная с 1-го дня (он тоже оплачивается на общих
+// основаниях), старый долг сюда не подмешиваем — он просто прибавляется к итоговой сумме отдельно.
+// неполные "льготные" сутки (бесплатный хвост, пока сутки не станут полными) в детализации не показываем.
+let remainingPaid=paidVal;
+const dailyList=document.getElementById("dailyList");
+dailyList.innerHTML="";
+
+let shownIdx=0;
+days.forEach(day=>{
+if(day.free) return;
+
+shownIdx++;
+const dateLabel=`${shownIdx}. ${day.label}`;
+
+let status,paidAmount;
+if(remainingPaid>=day.amount){
+status="paid";
+paidAmount=day.amount;
+remainingPaid-=day.amount;
+}else if(remainingPaid>0){
+status="partial";
+paidAmount=remainingPaid;
+remainingPaid=0;
+}else{
+status="unpaid";
+paidAmount=0;
+}
+
+let cls,statusText,amountText;
+if(status==="paid"){
+cls="dayPaid";
+statusText="оплачено";
+amountText=`${space(day.amount)} ₽`;
+}else if(status==="partial"){
+cls="dayPartial";
+statusText="частично";
+amountText=`${space(paidAmount)} из ${space(day.amount)} ₽`;
+}else{
+cls="dayUnpaid";
+statusText="не оплачено";
+amountText=`${space(day.amount)} ₽`;
+}
+
+const row=document.createElement("div");
+row.className="dayRow "+cls;
+row.innerHTML=`<span class="dayDate">${dateLabel}</span>`+
+`<span class="dayAmount">${amountText}</span>`+
+`<span class="dayStatus">${statusText}</span>`;
+dailyList.appendChild(row);
+});
+
+const rentalSum=days.reduce((a,d)=>a+d.amount,0);
+const totalWithDebt=rentalSum+oldDebtVal;
+const toPay=totalWithDebt-paidVal;
+document.getElementById("dailySummary").innerHTML=
+`Сумма за аренду: ${space(rentalSum)} ₽<br>`+
+`Старый долг: <span style="color:#e11d1d;">${space(oldDebtVal)} ₽</span><br>`+
+`Оплачено за период аренды: ${space(paidVal)} ₽<br>`+
+`Итого к оплате: ${space(toPay)} ₽`;
+
+document.getElementById("dailyBreakdown").style.display="block";
+}
+
+async function sendReport(){
+const detailBlock=document.getElementById("dailyBreakdown");
+const isDetailOpen=detailBlock.style.display==="block";
+
+if(isDetailOpen){
+if(!document.getElementById("dailyList").children.length) return alert("Сначала сделайте расчёт");
+}else{
+if(!tableBody.children.length) return alert("Сначала сделайте расчёт");
+}
+
+const target=isDetailOpen?detailBlock:document.getElementById("reportBottom");
+const card=document.querySelector(".card");
+target.classList.add("exportSquare");
+card.classList.add("exportSquare");
+const canvas=await html2canvas(target,{backgroundColor:"#ffffff"});
+target.classList.remove("exportSquare");
+card.classList.remove("exportSquare");
+canvas.toBlob(blob=>{
+const file=new File([blob],isDetailOpen?"rental-detailed.png":"rental.png",{type:"image/png"});
+if(navigator.share){navigator.share({files:[file]});}
+else{alert("Отправка доступна только на телефоне");}
+});
+}
+
+const logoBtn=document.getElementById("logoBtn");
+const contactsModal=document.getElementById("contactsModal");
+const modalCloseBtn=document.getElementById("modalCloseBtn");
+logoBtn.addEventListener("click",()=>contactsModal.classList.add("open"));
+modalCloseBtn.addEventListener("click",()=>contactsModal.classList.remove("open"));
+contactsModal.addEventListener("click",(e)=>{
+if(e.target===contactsModal) contactsModal.classList.remove("open");
+});
+
+// ---------- окно настроек приложения ----------
+const settingsModal=document.getElementById("settingsModal");
+function renderBillingModeUI(){
+document.querySelectorAll(".billingModeOpt").forEach(btn=>{
+btn.classList.toggle("active",btn.dataset.mode===settings.billingMode);
+});
+}
+document.getElementById("settingsOpenBtn").addEventListener("click",()=>{
+contactsModal.classList.remove("open");
+renderBillingModeUI();
+renderAccountUI();
+renderServerProfiles();
+document.getElementById("settingsBackupText").value="";
+document.getElementById("settingsBackupHint").textContent="";
+settingsModal.classList.add("open");
+});
+document.getElementById("settingsCloseBtn").addEventListener("click",()=>settingsModal.classList.remove("open"));
+settingsModal.addEventListener("click",(e)=>{
+if(e.target===settingsModal) settingsModal.classList.remove("open");
+});
+document.querySelectorAll(".billingModeOpt").forEach(btn=>{
+btn.addEventListener("click",()=>{
+settings.billingMode=btn.dataset.mode;
+saveSettings();
+markDirty();
+renderBillingModeUI();
+renderRentedList();
+vibrate(12);
+});
+});
+
+document.getElementById("settingsExportBtn").addEventListener("click",async()=>{
+const backup={version:1,exportedAt:new Date().toISOString(),cars,history,settings};
+const text=JSON.stringify(backup,null,2);
+const ta=document.getElementById("settingsBackupText");
+const hint=document.getElementById("settingsBackupHint");
+ta.value=text;
+try{
+await navigator.clipboard.writeText(text);
+hint.textContent="Готово — скопировано в буфер обмена ✓";
+hint.style.color="#0a9a4a";
+}catch(e){
+ta.focus();
+ta.select();
+hint.textContent="Текст готов — скопируйте вручную";
+hint.style.color="#5a6270";
+}
+vibrate(15);
+});
+
+document.getElementById("settingsImportBtn").addEventListener("click",()=>{
+const ta=document.getElementById("settingsBackupText");
+const hint=document.getElementById("settingsBackupHint");
+const raw=ta.value.trim();
+if(!raw){
+hint.textContent="Вставьте текст резервной копии";
+hint.style.color="#c62828";
+return;
+}
+let parsed;
+try{
+parsed=JSON.parse(raw);
+}catch(e){
+hint.textContent="Не удалось прочитать текст — проверьте, что это резервная копия XCAR";
+hint.style.color="#c62828";
+return;
+}
+if(!parsed||typeof parsed!=="object"||!Array.isArray(parsed.cars)||!Array.isArray(parsed.history)){
+hint.textContent="Этот текст не похож на резервную копию XCAR";
+hint.style.color="#c62828";
+return;
+}
+showConfirm({
+title:"Импортировать резервную копию?",
+message:"Текущие машины, история и настройки будут заменены данными из текста. Это действие нельзя отменить.",
+confirmText:"Импортировать",
+onConfirm:()=>{
+cars=parsed.cars;
+history=parsed.history;
+if(parsed.settings&&typeof parsed.settings==="object"){
+settings.billingMode=parsed.settings.billingMode==="persecond"?"persecond":"prepay";
+// логин/пароль/сервер конкретного устройства из резервной копии НЕ восстанавливаем —
+// это личные данные для входа именно на этом телефоне. А вот список сохранённых
+// серверов (название+адрес) — это как раз то, что резервная копия должна переносить.
+if(Array.isArray(parsed.settings.serverProfiles)){
+settings.serverProfiles=parsed.settings.serverProfiles.filter(p=>p&&typeof p==="object"&&typeof p.id==="string"&&typeof p.url==="string").map(p=>({id:p.id,name:typeof p.name==="string"?p.name:"Сервер",url:p.url}));
+settings.activeServerProfileId=typeof parsed.settings.activeServerProfileId==="string"?parsed.settings.activeServerProfileId:null;
+}
+}
+selectedCarIdx=null;
+saveCars();
+saveHistory();
+saveSettings();
+renderCarManageList();
+renderCarPickerList();
+renderRentedList();
+renderHistory();
+updateCarPickerLabel();
+renderBillingModeUI();
+renderAccountUI();
+renderServerProfiles();
+hint.textContent="Импортировано ✓";
+hint.style.color="#0a9a4a";
+}
+});
+});
+
+// ---------- звуковые сигналы (Web Audio API, без внешних файлов) ----------
+function playBeep(freq,dur,vol){
+try{
+const Ctx=window.AudioContext||window.webkitAudioContext;
+if(!Ctx) return;
+const ctx=window.__xcarAudioCtx||(window.__xcarAudioCtx=new Ctx());
+if(ctx.state==="suspended") ctx.resume().catch(()=>{});
+const osc=ctx.createOscillator();
+const gain=ctx.createGain();
+osc.type="sine";
+osc.frequency.value=freq||660;
+gain.gain.setValueAtTime(vol||0.15, ctx.currentTime);
+gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+(dur||120)/1000);
+osc.connect(gain);
+gain.connect(ctx.destination);
+osc.start();
+osc.stop(ctx.currentTime+(dur||120)/1000+0.02);
+}catch(e){}
+}
+function playSyncSound(success){
+if(success){playBeep(660,80,0.14);setTimeout(()=>playBeep(920,140,0.14),90);}
+else{playBeep(220,220,0.14);}
+}
+
+// ---------- аккаунт (логин/пароль/email/телефон) и синхронизация с сервером ----------
+function apiUrl(path){
+const base=(settings.account.serverUrl||"").trim().replace(/\/+$/,"");
+return base+path;
+}
+function accountConfigured(){
+const a=settings.account;
+return !!(a.serverUrl&&a.serverUrl.trim()&&a.username&&a.username.trim()&&a.password&&a.password.length>=4);
+}
+function setAccountHint(text,isError){
+const el=document.getElementById("accountHint");
+if(!el) return;
+el.textContent=text;
+el.style.color=isError?"#c62828":"#0a9a4a";
+}
+function setAuthMode(mode){
+document.getElementById("authTabLogin").classList.toggle("active",mode==="login");
+document.getElementById("authTabRegister").classList.toggle("active",mode==="register");
+document.getElementById("accountRegisterExtra").style.display=mode==="register"?"":"none";
+document.getElementById("accountLoginBtn").style.display=mode==="register"?"none":"";
+document.getElementById("accountRegisterBtn").style.display=mode==="register"?"":"none";
+}
+document.getElementById("authTabLogin").addEventListener("click",()=>setAuthMode("login"));
+document.getElementById("authTabRegister").addEventListener("click",()=>setAuthMode("register"));
+setAuthMode("login");
+function renderAccountUI(){
+const a=settings.account;
+const serverEl=document.getElementById("accountServerUrl");
+const userEl=document.getElementById("accountUsername");
+const passEl=document.getElementById("accountPassword");
+const emailEl=document.getElementById("accountEmail");
+const phoneEl=document.getElementById("accountPhone");
+if(!serverEl) return;
+if(document.activeElement!==serverEl) serverEl.value=a.serverUrl||"";
+if(document.activeElement!==userEl) userEl.value=a.username||"";
+if(document.activeElement!==passEl) passEl.value=a.password||"";
+if(document.activeElement!==emailEl) emailEl.value=a.email||"";
+if(document.activeElement!==phoneEl) phoneEl.value=a.phone||"";
+const authBlock=document.getElementById("accountAuthBlock");
+const connectedRow=document.getElementById("accountConnectedBtnRow");
+const deleteBtn=document.getElementById("accountDeleteBtn");
+const statusLine=document.getElementById("accountStatusLine");
+const pushRow=document.getElementById("pushToggleRow");
+const pushCheck=document.getElementById("pushToggleCheck");
+if(a.connected){
+authBlock.style.display="none";
+connectedRow.style.display="";
+deleteBtn.style.display="";
+if(pushRow) pushRow.style.display="";
+if(pushCheck) pushCheck.checked=!!settings.pushEnabled;
+let lastSync=0;
+try{lastSync=parseInt(localStorage.getItem("xcarLastSyncAt")||"0",10)||0;}catch(e){}
+const contactBits=[a.email,a.phone].filter(Boolean).join(" · ");
+statusLine.textContent=(lastSync?`Вход выполнен как «${a.username}» · синхронизировано в ${new Date(lastSync).toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"})}`:`Вход выполнен как «${a.username}»`)+(contactBits?` · ${contactBits}`:"");
+}else{
+authBlock.style.display="";
+connectedRow.style.display="none";
+deleteBtn.style.display="none";
+if(pushRow) pushRow.style.display="none";
+statusLine.textContent="Работает без регистрации — данные хранятся только на этом устройстве";
+}
+}
+
+// ---------- сохранённые серверы (Render / домашний / другие), с пингом и переключением ----------
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+const SERVER_TEMPLATES={
+render:{name:"Render",placeholder:"https://xcar-server-xxxx.onrender.com"},
+home:{name:"Домашний сервер (Ubuntu)",placeholder:"http://192.168.1.10:3000 или https://мой-домен.duckdns.org"},
+custom:{name:"",placeholder:"https://..."}
+};
+let editingServerProfileId=null;
+const pingResults={};
+function genId(){return "s"+Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
+function renderServerProfiles(){
+const wrap=document.getElementById("serverProfileList");
+if(!wrap) return;
+const profiles=settings.serverProfiles||[];
+if(!profiles.length){
+wrap.innerHTML=`<div class="serverEmptyHint">Пока нет сохранённых серверов — добавьте Render, домашний сервер или свой вариант ниже</div>`;
+return;
+}
+wrap.innerHTML="";
+profiles.forEach(p=>{
+const isActive=settings.activeServerProfileId===p.id;
+const pr=pingResults[p.id]||{status:"idle",text:""};
+const item=document.createElement("div");
+item.className="serverProfileItem"+(isActive?" active":"");
+item.innerHTML=`<div class="serverProfileTop">`+
+`<div class="serverProfileDot ${pr.status==="ok"?"ok":pr.status==="err"?"err":pr.status==="pending"?"pending":""}"></div>`+
+`<div class="serverProfileInfo">`+
+`<div class="serverProfileName">${escapeHtml(p.name||"Сервер")}</div>`+
+`<div class="serverProfileUrl">${escapeHtml(p.url||"")}</div>`+
+`</div>`+
+`<button type="button" class="serverProfileUseBtn ${isActive?"active":""}" data-act="use">${isActive?"Активен":"Использовать"}</button>`+
+`</div>`+
+`<div class="serverProfileBottom">`+
+`<div class="serverProfilePing">${escapeHtml(pr.text||"")}</div>`+
+`<div class="serverProfileActions">`+
+`<button type="button" class="serverProfileIconBtn" data-act="ping" title="Проверить">📶</button>`+
+`<button type="button" class="serverProfileIconBtn" data-act="edit" title="Изменить">✎</button>`+
+`<button type="button" class="serverProfileIconBtn" data-act="del" title="Удалить">🗑</button>`+
+`</div>`+
+`</div>`;
+item.querySelector('[data-act="use"]').addEventListener("click",()=>activateServerProfile(p.id));
+item.querySelector('[data-act="ping"]').addEventListener("click",()=>pingServerProfile(p.id));
+item.querySelector('[data-act="edit"]').addEventListener("click",()=>openServerEdit(p.id));
+item.querySelector('[data-act="del"]').addEventListener("click",()=>deleteServerProfile(p.id));
+wrap.appendChild(item);
+});
+}
+function activateServerProfile(id){
+const p=(settings.serverProfiles||[]).find(x=>x.id===id);
+if(!p) return;
+settings.activeServerProfileId=id;
+settings.account.serverUrl=p.url;
+saveSettings();
+const serverEl=document.getElementById("accountServerUrl");
+if(serverEl) serverEl.value=p.url;
+renderServerProfiles();
+setAccountHint(`Выбран сервер «${p.name}»`,false);
+vibrate(12);
+}
+async function pingServerProfile(id){
+const p=(settings.serverProfiles||[]).find(x=>x.id===id);
+if(!p) return;
+pingResults[id]={status:"pending",text:"Проверка…"};
+renderServerProfiles();
+const url=(p.url||"").trim().replace(/\/+$/,"");
+if(!url){pingResults[id]={status:"err",text:"Не указан адрес"};renderServerProfiles();return;}
+const controller=(typeof AbortController!=="undefined")?new AbortController():null;
+const timer=controller?setTimeout(()=>controller.abort(),5000):null;
+const started=(typeof performance!=="undefined"&&performance.now)?performance.now():Date.now();
+try{
+const resp=await fetch(url+"/health",{signal:controller?controller.signal:undefined,cache:"no-store"});
+if(timer) clearTimeout(timer);
+const elapsed=Math.round(((typeof performance!=="undefined"&&performance.now)?performance.now():Date.now())-started);
+if(resp.ok){pingResults[id]={status:"ok",text:`В сети · ${elapsed} мс`};}
+else{pingResults[id]={status:"err",text:`Ошибка сервера (HTTP ${resp.status})`};}
+}catch(e){
+if(timer) clearTimeout(timer);
+pingResults[id]={status:"err",text:e&&e.name==="AbortError"?"Не отвечает (таймаут)":"Недоступен"};
+}
+renderServerProfiles();
+}
+async function pingAllServerProfiles(){
+const profiles=settings.serverProfiles||[];
+if(!profiles.length){setAccountHint("Сначала добавьте сервер",true);return;}
+await Promise.all(profiles.map(p=>pingServerProfile(p.id)));
+}
+function openServerEdit(id,tpl){
+editingServerProfileId=id||null;
+const box=document.getElementById("serverEditBox");
+const nameEl=document.getElementById("serverEditName");
+const urlEl=document.getElementById("serverEditUrl");
+if(id){
+const p=(settings.serverProfiles||[]).find(x=>x.id===id);
+nameEl.value=p?p.name:"";
+urlEl.value=p?p.url:"";
+urlEl.placeholder="https://...";
+}else{
+const t=SERVER_TEMPLATES[tpl||"custom"];
+nameEl.value=t.name;
+urlEl.value="";
+urlEl.placeholder=t.placeholder;
+}
+box.style.display="";
+nameEl.focus();
+}
+function closeServerEdit(){
+editingServerProfileId=null;
+document.getElementById("serverEditBox").style.display="none";
+document.getElementById("serverEditName").value="";
+document.getElementById("serverEditUrl").value="";
+}
+function deleteServerProfile(id){
+const p=(settings.serverProfiles||[]).find(x=>x.id===id);
+if(!p) return;
+showConfirm({
+title:"Удалить сервер?",
+message:`Профиль «${p.name}» будет удалён из списка. Сам сервер и данные на нём не затрагиваются.`,
+confirmText:"Удалить",
+onConfirm:()=>{
+settings.serverProfiles=(settings.serverProfiles||[]).filter(x=>x.id!==id);
+if(settings.activeServerProfileId===id) settings.activeServerProfileId=null;
+delete pingResults[id];
+saveSettings();
+renderServerProfiles();
+vibrate(15);
+}
+});
+}
+document.querySelectorAll(".serverQuickAddBtn").forEach(btn=>{
+btn.addEventListener("click",()=>{
+vibrate(10);
+openServerEdit(null,btn.dataset.tpl);
+});
+});
+document.getElementById("serverEditCancelBtn").addEventListener("click",closeServerEdit);
+document.getElementById("serverEditSaveBtn").addEventListener("click",()=>{
+const name=document.getElementById("serverEditName").value.trim()||"Сервер";
+const url=document.getElementById("serverEditUrl").value.trim();
+if(!url){setAccountHint("Укажите адрес сервера",true);vibrate(20);return;}
+if(!settings.serverProfiles) settings.serverProfiles=[];
+if(editingServerProfileId&&(settings.serverProfiles||[]).some(x=>x.id===editingServerProfileId)){
+const p=settings.serverProfiles.find(x=>x.id===editingServerProfileId);
+p.name=name;p.url=url;
+}else{
+const id=genId();
+settings.serverProfiles.push({id,name,url});
+editingServerProfileId=id;
+}
+saveSettings();
+activateServerProfile(editingServerProfileId);
+closeServerEdit();
+renderServerProfiles();
+setAccountHint("Сервер сохранён ✓",false);
+vibrate([15,20,15]);
+});
+document.getElementById("serverPingAllBtn").addEventListener("click",()=>{vibrate(10);pingAllServerProfiles();});
+
+async function doRegister(){
+const a=settings.account;
+if(!a.serverUrl||!a.serverUrl.trim()){setAccountHint("Укажите адрес сервера",true);vibrate(20);return;}
+if(!a.username||!a.username.trim()){setAccountHint("Укажите логин",true);vibrate(20);return;}
+if(!a.password||a.password.length<4){setAccountHint("Пароль должен быть не короче 4 символов",true);vibrate(20);return;}
+setAccountHint("Регистрация…",false);
+try{
+// сразу создаём аккаунт НА СЕРВЕРЕ с текущими локальными данными одним запросом —
+// это исключает гонку по времени с последующей отдельной синхронизацией
+const resp=await fetch(apiUrl("/api/register"),{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+username:a.username,
+password:a.password,
+email:a.email||"",
+phone:a.phone||"",
+payload:{cars:cars,history:history,settings:{billingMode:settings.billingMode}}
+})
+});
+if(resp.status===409){
+setAccountHint("Такой логин уже занят — нажмите «Вход» или выберите другой логин",true);
+vibrate(20);
+return;
+}
+if(!resp.ok){
+const errData=await resp.json().catch(()=>({}));
+throw new Error(errData.error||("HTTP "+resp.status));
+}
+const data=await resp.json();
+settings.account.connected=true;
+saveSettings();
+try{localStorage.setItem("xcarLocalUpdatedAt", String(data.updatedAt||Date.now()));}catch(e){}
+try{localStorage.setItem("xcarLastSyncAt", String(Date.now()));}catch(e){}
+renderAccountUI();
+vibrate([15,25,15]);
+playSyncSound(true);
+setAccountHint("Аккаунт создан ✓",false);
+}catch(e){
+vibrate([40,40,40]);
+playSyncSound(false);
+setAccountHint((e&&e.message&&!/^HTTP /.test(e.message))?e.message:"Не удалось зарегистрироваться — проверьте адрес сервера и соединение",true);
+}
+}
+async function doLogin(){
+const a=settings.account;
+if(!a.serverUrl||!a.serverUrl.trim()){setAccountHint("Укажите адрес сервера",true);vibrate(20);return;}
+if(!a.username||!a.username.trim()||!a.password){setAccountHint("Укажите логин и пароль",true);vibrate(20);return;}
+setAccountHint("Вход…",false);
+try{
+const resp=await fetch(apiUrl("/api/login"),{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({username:a.username,password:a.password})
+});
+if(resp.status===404){
+setAccountHint("Аккаунт не найден — нажмите «Регистрация»",true);
+vibrate(20);
+return;
+}
+if(resp.status===401){
+setAccountHint("Неверный пароль",true);
+vibrate(20);
+return;
+}
+if(!resp.ok) throw new Error("HTTP "+resp.status);
+const data=await resp.json();
+const applyLogin=()=>{
+if(data.payload&&Array.isArray(data.payload.cars)) cars=data.payload.cars;
+if(data.payload&&Array.isArray(data.payload.history)) history=data.payload.history;
+if(data.payload&&data.payload.settings&&typeof data.payload.settings==="object"){
+settings.billingMode=data.payload.settings.billingMode==="persecond"?"persecond":"prepay";
+}
+if(typeof data.email==="string") settings.account.email=data.email;
+if(typeof data.phone==="string") settings.account.phone=data.phone;
+saveCars();
+saveHistory();
+try{localStorage.setItem("xcarLocalUpdatedAt", String(data.updatedAt||Date.now()));}catch(e){}
+settings.account.connected=true;
+saveSettings();
+try{localStorage.setItem("xcarLastSyncAt", String(Date.now()));}catch(e){}
+renderCarManageList();
+renderCarPickerList();
+renderRentedList();
+renderHistory();
+updateCarPickerLabel();
+renderBillingModeUI();
+renderAccountUI();
+vibrate([15,25,15]);
+playSyncSound(true);
+setAccountHint("Вход выполнен ✓",false);
+};
+const hasLocalData=cars.length||history.length;
+if(hasLocalData){
+showConfirm({
+title:"Войти в аккаунт?",
+message:`Текущие машины, история и настройки на этом устройстве будут заменены данными аккаунта «${settings.account.username}». Это действие нельзя отменить.`,
+confirmText:"Войти",
+onConfirm:applyLogin
+});
+}else{
+applyLogin();
+}
+}catch(e){
+vibrate([40,40,40]);
+playSyncSound(false);
+setAccountHint("Не удалось войти — проверьте адрес сервера и соединение",true);
+}
+}
+let syncInFlight=false;
+function syncNow(opts){
+opts=opts||{};
+if(!accountConfigured()){
+if(opts.manual){setAccountHint("Укажите логин и пароль",true);vibrate(20);}
+return Promise.resolve();
+}
+if(syncInFlight) return Promise.resolve();
+syncInFlight=true;
+if(opts.manual) setAccountHint("Синхронизация…",false);
+const controller=(typeof AbortController!=="undefined")?new AbortController():null;
+const timer=controller?setTimeout(()=>controller.abort(),12000):null;
+return fetch(apiUrl("/api/sync"),{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+username:settings.account.username,
+password:settings.account.password,
+updatedAt:getLocalUpdatedAt(),
+payload:{cars:cars,history:history,settings:{billingMode:settings.billingMode}}
+}),
+signal:controller?controller.signal:undefined
+}).then(resp=>{
+if(timer) clearTimeout(timer);
+if(!resp.ok){const err=new Error("HTTP "+resp.status);err.status=resp.status;throw err;}
+return resp.json();
+}).then(data=>{
+if(data&&data.payload){
+if(Array.isArray(data.payload.cars)) cars=data.payload.cars;
+if(Array.isArray(data.payload.history)) history=data.payload.history;
+if(data.payload.settings&&typeof data.payload.settings==="object"){
+settings.billingMode=data.payload.settings.billingMode==="persecond"?"persecond":"prepay";
+}
+saveCars();
+saveHistory();
+try{localStorage.setItem("xcarLocalUpdatedAt", String(data.updatedAt||Date.now()));}catch(e){}
+renderCarManageList();
+renderCarPickerList();
+renderRentedList();
+renderHistory();
+updateCarPickerLabel();
+renderBillingModeUI();
+}
+settings.account.connected=true;
+saveSettings();
+try{localStorage.setItem("xcarLastSyncAt", String(Date.now()));}catch(e){}
+renderAccountUI();
+if(opts.manual){vibrate([15,25,15]);playSyncSound(true);setAccountHint("Синхронизировано ✓",false);}
+}).catch(err=>{
+if(err&&(err.status===401||err.status===404)){
+// сохранённые логин/пароль больше не подходят на сервере — выходим локально
+settings.account.connected=false;
+saveSettings();
+renderAccountUI();
+if(opts.manual){vibrate(20);setAccountHint("Сессия недействительна — войдите заново",true);}
+return;
+}
+if(opts.manual){vibrate([40,40,40]);playSyncSound(false);setAccountHint("Не удалось синхронизировать — проверьте адрес сервера и соединение",true);}
+}).finally(()=>{
+syncInFlight=false;
+});
+}
+
+// ---------- push-уведомления: если аренда оформлена/завершена на одном телефоне —
+// на других телефонах, где выполнен вход в тот же аккаунт, приходит уведомление ----------
+function urlBase64ToUint8Array(base64String){
+const padding="=".repeat((4-base64String.length%4)%4);
+const base64=(base64String+padding).replace(/-/g,"+").replace(/_/g,"/");
+const rawData=atob(base64);
+const outputArray=new Uint8Array(rawData.length);
+for(let i=0;i<rawData.length;++i){outputArray[i]=rawData.charCodeAt(i);}
+return outputArray;
+}
+function pushSupported(){
+return "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+}
+async function subscribeToPush(){
+if(!pushSupported()){setAccountHint("Этот браузер не поддерживает push-уведомления",true);return false;}
+if(!accountConfigured()||!settings.account.connected){setAccountHint("Сначала войдите в аккаунт",true);return false;}
+try{
+let permission=Notification.permission;
+if(permission==="default") permission=await Notification.requestPermission();
+if(permission!=="granted"){setAccountHint("Уведомления запрещены в настройках браузера/телефона",true);return false;}
+const reg=await navigator.serviceWorker.ready;
+const keyResp=await fetch(apiUrl("/api/push/vapid-public-key"));
+if(!keyResp.ok) throw new Error("HTTP "+keyResp.status);
+const {publicKey}=await keyResp.json();
+let sub=await reg.pushManager.getSubscription();
+if(!sub){
+sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array(publicKey)});
+}
+const subJson=sub.toJSON();
+const resp=await fetch(apiUrl("/api/push/subscribe"),{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({username:settings.account.username,password:settings.account.password,subscription:{endpoint:subJson.endpoint,keys:subJson.keys}})
+});
+if(!resp.ok) throw new Error("HTTP "+resp.status);
+settings.pushEnabled=true;
+settings.pushEndpoint=subJson.endpoint;
+saveSettings();
+setAccountHint("Push-уведомления включены ✓",false);
+vibrate([15,25,15]);
+return true;
+}catch(e){
+settings.pushEnabled=false;
+saveSettings();
+setAccountHint("Не удалось включить push-уведомления — проверьте разрешения и соединение",true);
+return false;
+}
+}
+async function unsubscribeFromPush(){
+try{
+if(pushSupported()){
+const reg=await navigator.serviceWorker.ready;
+const sub=await reg.pushManager.getSubscription();
+if(sub){
+if(accountConfigured()){
+await fetch(apiUrl("/api/push/unsubscribe"),{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({username:settings.account.username,password:settings.account.password,endpoint:sub.endpoint})
+}).catch(()=>{});
+}
+await sub.unsubscribe().catch(()=>{});
+}
+}
+}catch(e){}
+settings.pushEnabled=false;
+settings.pushEndpoint="";
+saveSettings();
+}
+document.getElementById("pushToggleCheck").addEventListener("change",async(e)=>{
+const wantOn=e.target.checked;
+if(wantOn){
+const ok=await subscribeToPush();
+if(!ok) e.target.checked=false;
+}else{
+e.target.checked=false;
+await unsubscribeFromPush();
+setAccountHint("Push-уведомления выключены",false);
+vibrate(12);
+}
+});
+// уведомляет ДРУГИЕ устройства этого же аккаунта о действии (не блокирует основной поток —
+// если сервер недоступен, уведомление просто не дойдёт, это не мешает работе приложения)
+function notifyOtherDevices(bodyText){
+if(!accountConfigured()||!settings.account.connected) return;
+fetch(apiUrl("/api/push/notify"),{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({username:settings.account.username,password:settings.account.password,title:"XCAR",body:bodyText,excludeEndpoint:settings.pushEndpoint||undefined})
+}).catch(()=>{});
+}
+// при запуске приложения, если аккаунт подключён и push раньше был включён — незаметно
+// продлеваем/восстанавливаем подписку (pushManager.subscribe на уже активной подписке
+// просто возвращает её же, без повторного запроса разрешения)
+if(settings.account&&settings.account.connected&&settings.pushEnabled&&pushSupported()){
+setTimeout(()=>{subscribeToPush();},2000);
+}
+
+document.getElementById("accountServerUrl").addEventListener("input",e=>{
+settings.account.serverUrl=e.target.value.trim();
+const active=(settings.serverProfiles||[]).find(p=>p.id===settings.activeServerProfileId);
+if(active&&active.url!==settings.account.serverUrl){
+settings.activeServerProfileId=null;
+renderServerProfiles();
+}
+saveSettings();
+});
+document.getElementById("accountUsername").addEventListener("input",e=>{
+settings.account.username=e.target.value.trim();
+saveSettings();
+});
+document.getElementById("accountPassword").addEventListener("input",e=>{
+settings.account.password=e.target.value;
+saveSettings();
+});
+document.getElementById("accountEmail").addEventListener("input",e=>{
+settings.account.email=e.target.value.trim();
+saveSettings();
+});
+document.getElementById("accountPhone").addEventListener("input",e=>{
+settings.account.phone=e.target.value.trim();
+saveSettings();
+});
+document.getElementById("accountRegisterBtn").addEventListener("click",()=>{
+doRegister();
+});
+document.getElementById("accountLoginBtn").addEventListener("click",()=>{
+doLogin();
+});
+document.getElementById("accountSyncNowBtn").addEventListener("click",()=>{
+syncNow({manual:true});
+});
+document.getElementById("accountLogoutBtn").addEventListener("click",()=>{
+showConfirm({
+title:"Выйти из аккаунта?",
+message:"Синхронизация с сервером будет остановлена на этом устройстве. Локальные данные останутся, а аккаунт и данные на сервере не удаляются.",
+confirmText:"Выйти",
+onConfirm:async()=>{
+await unsubscribeFromPush();
+settings.account.connected=false;
+saveSettings();
+renderAccountUI();
+setAccountHint("Вы вышли из аккаунта",false);
+vibrate(15);
+}
+});
+});
+document.getElementById("accountDeleteBtn").addEventListener("click",()=>{
+showConfirm({
+title:"Удалить аккаунт с сервера?",
+message:`Аккаунт «${settings.account.username}» и все синхронизированные данные будут удалены с сервера навсегда. Локальные данные на этом устройстве останутся.`,
+confirmText:"Удалить",
+onConfirm:async()=>{
+await unsubscribeFromPush();
+try{
+await fetch(apiUrl("/api/account"),{
+method:"DELETE",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({username:settings.account.username,password:settings.account.password})
+});
+}catch(e){}
+settings.account.connected=false;
+saveSettings();
+renderAccountUI();
+setAccountHint("Аккаунт удалён с сервера",false);
+vibrate([20,40,20]);
+}
+});
+});
+renderAccountUI();
+setInterval(()=>{
+if(settings.account&&settings.account.connected&&!document.hidden) syncNow({silent:true});
+},30000);
+if(settings.account&&settings.account.connected){
+setTimeout(()=>syncNow({}),1200);
+}
+
+// ---------- потяните вниз в меню, чтобы синхронизироваться с сервером ----------
+(function setupPullToRefresh(){
+const content=document.getElementById("page2Content");
+const indicator=document.getElementById("pullRefreshIndicator");
+const icon=document.getElementById("pullRefreshIcon");
+const label=document.getElementById("pullRefreshLabel");
+if(!content||!indicator) return;
+const MAX=56,THRESHOLD=54;
+let startY=0,pulling=false,active=false;
+content.addEventListener("pointerdown",e=>{
+if(content.scrollTop>0) return;
+startY=e.clientY;
+pulling=true;
+active=false;
+});
+content.addEventListener("pointermove",e=>{
+if(!pulling) return;
+if(content.scrollTop>0){pulling=false;return;}
+const dy=e.clientY-startY;
+if(dy<=0) return;
+active=true;
+if(e.cancelable) e.preventDefault();
+const dist=Math.min(dy*0.5,MAX);
+indicator.style.transition="none";
+indicator.style.marginTop=(dist-MAX)+"px";
+const ready=dist>=THRESHOLD-2;
+icon.textContent=ready?"🔄":"⬇️";
+icon.classList.remove("spinning");
+label.textContent=ready?"Отпустите для синхронизации":"Потяните для синхронизации";
+},{passive:false});
+function endPull(){
+if(!pulling) return;
+pulling=false;
+if(!active) return;
+active=false;
+const rawMargin=parseFloat(indicator.style.marginTop);
+const currentMargin=Number.isNaN(rawMargin)?(-MAX):rawMargin;
+const dist=currentMargin+MAX;
+if(dist>=THRESHOLD-2){
+indicator.style.transition="margin-top .2s ease";
+indicator.style.marginTop="0px";
+icon.textContent="🔄";
+icon.classList.add("spinning");
+label.textContent="Синхронизация…";
+vibrate(12);
+syncNow({manual:true}).then(()=>{
+setTimeout(()=>{
+indicator.style.transition="margin-top .25s ease";
+indicator.style.marginTop=(-MAX)+"px";
+icon.classList.remove("spinning");
+label.textContent="Потяните для синхронизации";
+},450);
+});
+}else{
+indicator.style.transition="margin-top .2s ease";
+indicator.style.marginTop=(-MAX)+"px";
+}
+}
+content.addEventListener("pointerup",endPull);
+content.addEventListener("pointerleave",endPull);
+content.addEventListener("pointercancel",endPull);
+})();
+
+// ---------- обновить приложение: удержание 2 сек с анимацией ----------
+function attachHoldToUpdate(btnId,holdMs){
+const btn=document.getElementById(btnId);
+if(!btn) return;
+const fill=btn.querySelector(".historyClearFill");
+const labelEl=btn.querySelector(".historyClearLabelText");
+const restLabel=labelEl.textContent;
+let holdTimer=null,startTs=0,rafId=null;
+function tick(){
+if(!btn.classList.contains("holding")) return;
+const elapsed=Date.now()-startTs;
+const remain=Math.max(0,Math.ceil((holdMs-elapsed)/1000));
+labelEl.textContent=`Держите… ${remain} с`;
+rafId=requestAnimationFrame(tick);
+}
+function startHold(){
+btn.classList.add("holding");
+startTs=Date.now();
+fill.style.transition="none";
+fill.style.width="0%";
+void fill.offsetWidth;
+fill.style.transition=`width ${holdMs}ms linear`;
+requestAnimationFrame(()=>{fill.style.width="100%";});
+vibrate(10);
+tick();
+holdTimer=setTimeout(finishHold,holdMs);
+}
+function resetVisual(){
+btn.classList.remove("holding");
+fill.style.transition="width .25s ease";
+fill.style.width="0%";
+labelEl.textContent=restLabel;
+}
+function cancelHold(){
+if(!holdTimer) return;
+clearTimeout(holdTimer);
+holdTimer=null;
+if(rafId){cancelAnimationFrame(rafId);rafId=null;}
+resetVisual();
+}
+function finishHold(){
+holdTimer=null;
+if(rafId){cancelAnimationFrame(rafId);rafId=null;}
+resetVisual();
+vibrate([20,40,20,40,20]);
+startAppUpdate();
+}
+btn.addEventListener("pointerdown",e=>{e.preventDefault();startHold();});
+btn.addEventListener("pointerup",cancelHold);
+btn.addEventListener("pointerleave",cancelHold);
+btn.addEventListener("pointercancel",cancelHold);
+}
+attachHoldToUpdate("updateAppBtn",2000);
+async function startAppUpdate(){
+document.getElementById("settingsModal").classList.remove("open");
+document.getElementById("contactsModal").classList.remove("open");
+document.getElementById("updateOverlay").classList.add("open");
+playBeep(520,90,0.12);
+try{
+if("serviceWorker" in navigator && navigator.serviceWorker.getRegistrations){
+const regs=await navigator.serviceWorker.getRegistrations();
+for(const r of regs){await r.update().catch(()=>{});}
+}
+if(window.caches && caches.keys){
+const keys=await caches.keys();
+await Promise.all(keys.map(k=>caches.delete(k)));
+}
+}catch(e){}
+setTimeout(()=>{
+playSyncSound(true);
+location.reload();
+},1600);
+}
+
+if("serviceWorker" in navigator){
+window.addEventListener("load",()=>{
+navigator.serviceWorker.register("service-worker.js").catch(err=>console.log("SW error:",err));
+});
+}
+
+let deferredPrompt;
+const installBtn=document.getElementById("installBtn");
+window.addEventListener("beforeinstallprompt",(e)=>{
+e.preventDefault();
+deferredPrompt=e;
+installBtn.style.display="block";
+});
+installBtn.addEventListener("click",async()=>{
+if(!deferredPrompt) return;
+installBtn.style.display="none";
+deferredPrompt.prompt();
+await deferredPrompt.userChoice;
+deferredPrompt=null;
+});
+window.addEventListener("appinstalled",()=>{
+installBtn.style.display="none";
+});
+
+(function(){
+const isIos=/iphone|ipad|ipod/i.test(navigator.userAgent);
+const isInStandalone=("standalone" in navigator)&&navigator.standalone;
+if(isIos && !isInStandalone){
+document.getElementById("iosHint").style.display="block";
+}
+})();
+</script>
+</body>
+</html>
