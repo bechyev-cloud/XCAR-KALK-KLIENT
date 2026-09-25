@@ -16,6 +16,7 @@
 <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
 
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 
 <style>
 body{margin:0;background:linear-gradient(180deg,#f5f7fa,#eef2f7);font-family:system-ui;display:flex;justify-content:center;padding:18px;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}
@@ -88,7 +89,8 @@ td{padding:12px;text-align:center;border-bottom:1px solid #e5e5e5;}
 .ci-car{background:linear-gradient(135deg,#dbeafe,#bfdbfe);}
 .ci-burger{background:linear-gradient(135deg,#fff3cd,#ffe69c);}
 .ci-person{background:linear-gradient(135deg,#e0e7ff,#c7d2fe);}
-.modalClose{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:#f0f2f6;border:none;font-size:16px;color:#5a6270;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.modalClose{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:#f0f2f6;border:none;font-size:16px;color:#5a6270;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .3s cubic-bezier(.34,1.56,.64,1),background .15s ease;-webkit-tap-highlight-color:transparent;}
+.modalClose:active{transform:scale(.82) rotate(90deg);background:#e2e6ec;}
 
 .settingsOpenBtn{width:100%;margin-top:4px;padding:13px 14px;border-radius:16px;border:1.5px dashed #c9d3e0;background:#fff;color:#2a2f36;font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s ease;}
 .settingsOpenBtn:active{background:#f3f6fb;}
@@ -134,6 +136,8 @@ td{padding:12px;text-align:center;border-bottom:1px solid #e5e5e5;}
 .serverQuickAddBtn:active{background:#f6f8fb;}
 .serverEditBox{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;padding:10px;border-radius:14px;background:#f6f8fb;border:1.5px solid #eef1f6;}
 .serverEmptyHint{font-size:11.5px;color:#8a93a3;text-align:center;padding:6px 0;}
+@keyframes btnSuccessPulse{0%{transform:scale(1);box-shadow:0 0 0 0 rgba(10,154,74,.5);}35%{transform:scale(1.045);box-shadow:0 0 0 7px rgba(10,154,74,.16);}100%{transform:scale(1);box-shadow:0 0 0 15px rgba(10,154,74,0);}}
+.btnSuccessFlash{animation:btnSuccessPulse .55s cubic-bezier(.34,1.56,.64,1);}
 .updateAppBtn{border-color:#c9d9ff;color:#0047ff;box-shadow:0 2px 8px rgba(0,71,255,.1);}
 .updateAppBtn:active{background:#eef4ff;}
 .updateAppBtn .historyClearFill{background:#0047ff;}
@@ -162,10 +166,17 @@ td{padding:12px;text-align:center;border-bottom:1px solid #e5e5e5;}
 .gearBtn{position:absolute;right:0;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;border:none;background:#f1f4f8;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s ease,transform .15s ease;}
 .gearBtn:active{background:#e2e8f0;transform:translateY(-50%) scale(.92);}
 
-.navBtn{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;border:none;background:#f1f4f8;color:#001f5b;font-size:19px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s ease,transform .15s ease;font-family:inherit;}
-.navBtn:active{background:#e2e8f0;transform:translateY(-50%) scale(.92);}
+.navBtn{position:absolute;top:50%;transform:translateY(-50%) scale(1);width:44px;height:44px;border-radius:50%;border:none;background:linear-gradient(145deg,#ffffff,#eef2f9);box-shadow:0 4px 12px rgba(10,30,70,.12),0 1px 3px rgba(10,30,70,.07),inset 0 1px 0 rgba(255,255,255,.6);color:#001f5b;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .38s cubic-bezier(.34,1.56,.64,1),box-shadow .25s ease;font-family:inherit;overflow:hidden;-webkit-tap-highlight-color:transparent;}
+.navBtn:active{transform:translateY(-50%) scale(.86);box-shadow:0 1px 4px rgba(10,30,70,.14),inset 0 1px 0 rgba(255,255,255,.6);}
 .navBtnLeft{left:0;}
 .navBtnRight{right:0;}
+.navBtnArrow{width:10px;height:10px;border-top:2.6px solid #0047ff;border-right:2.6px solid #0047ff;border-radius:1.5px;pointer-events:none;transition:border-color .2s ease;}
+.navBtnLeft .navBtnArrow{transform:rotate(-135deg);margin-left:4px;}
+.navBtnRight .navBtnArrow{transform:rotate(45deg);margin-right:4px;}
+.navBtn:active .navBtnArrow{border-color:#001f5b;}
+.navBtnRippleFx{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,rgba(0,71,255,.32) 0%,rgba(0,71,255,0) 70%);opacity:0;pointer-events:none;}
+.navBtnRippleFx.animate{animation:navBtnRipple .5s ease-out;}
+@keyframes navBtnRipple{0%{opacity:.7;transform:scale(.25);}100%{opacity:0;transform:scale(1.9);}}
 
 .carPickerBtn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;margin:6px 0 12px 0;border-radius:14px;border:1px solid #e2e6ec;background:#f9fbfd;cursor:pointer;font-size:15px;font-family:inherit;text-align:left;box-sizing:border-box;transition:border-color .15s ease,background .15s ease;}
 .carPickerBtn:active{background:#f0f3f7;}
@@ -206,7 +217,7 @@ clip-path:inset(0 100% 0 0);transition:clip-path 1s linear,opacity .3s ease;}
 .historyHandle{position:fixed;left:0;top:50%;transform:translateY(-50%);width:6px;height:64px;background:#0047ff;border-radius:0 8px 8px 0;opacity:.35;z-index:900;transition:opacity .2s ease;}
 .historyOverlay{display:none;position:fixed;inset:0;background:rgba(6,12,28,.55);backdrop-filter:blur(2px);z-index:998;}
 .historyOverlay.open{display:block;}
-.historyDrawer{position:fixed;top:0;left:0;bottom:0;width:86%;max-width:340px;background:#f6f8fc;z-index:999;box-shadow:16px 0 46px rgba(0,10,40,.28);border-radius:0 28px 28px 0;overflow:hidden;transform:translateX(-100%);transition:transform .32s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;}
+.historyDrawer{position:fixed;top:0;left:0;bottom:0;width:95%;max-width:460px;background:#f6f8fc;z-index:999;box-shadow:16px 0 46px rgba(0,10,40,.28);border-radius:0 28px 28px 0;overflow:hidden;transform:translateX(-100%);transition:transform .32s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;}
 .historyDrawer.open{transform:translateX(0);}
 .historyDrawer.dragging{transition:none;}
 
@@ -215,8 +226,8 @@ clip-path:inset(0 100% 0 0);transition:clip-path 1s linear,opacity .3s ease;}
 .historyHeaderTop{display:flex;align-items:flex-start;justify-content:space-between;position:relative;z-index:1;}
 .historyTitle{font-size:19px;font-weight:800;color:#fff;letter-spacing:.2px;}
 .historySubtitle{font-size:11.5px;color:rgba(255,255,255,.68);margin-top:4px;font-weight:600;}
-.historyCloseBtn{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.16);border:none;font-size:14px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s ease;}
-.historyCloseBtn:active{background:rgba(255,255,255,.32);}
+.historyCloseBtn{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.16);border:none;font-size:14px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s ease,transform .3s cubic-bezier(.34,1.56,.64,1);-webkit-tap-highlight-color:transparent;}
+.historyCloseBtn:active{background:rgba(255,255,255,.32);transform:scale(.82) rotate(90deg);}
 
 .historyList{flex:1;overflow-y:auto;padding:16px 14px 6px;}
 .historyItem{background:#fff;border-radius:18px;padding:14px 40px 14px 14px;margin-bottom:12px;position:relative;z-index:0;cursor:pointer;transition:transform .12s ease,box-shadow .12s ease;box-shadow:0 2px 10px rgba(20,30,60,.06);border:1px solid #eef1f6;}
@@ -270,7 +281,7 @@ height:40px;background:#ffffff;border-top:1px solid #e5e5e5;font-size:11px;
 .page2Handle{position:fixed;right:0;top:50%;transform:translateY(-50%);width:6px;height:64px;background:#6a1b9a;border-radius:8px 0 0 8px;opacity:.35;z-index:900;transition:opacity .2s ease;}
 .page2Overlay{display:none;position:fixed;inset:0;background:rgba(6,12,28,.55);backdrop-filter:blur(2px);z-index:998;}
 .page2Overlay.open{display:block;}
-.page2Drawer{position:fixed;top:0;right:0;bottom:0;width:86%;max-width:340px;background:#f6f8fc;z-index:999;box-shadow:-16px 0 46px rgba(0,10,40,.28);border-radius:28px 0 0 28px;overflow:hidden;transform:translateX(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;}
+.page2Drawer{position:fixed;top:0;right:0;bottom:0;width:95%;max-width:460px;background:#f6f8fc;z-index:999;box-shadow:-16px 0 46px rgba(0,10,40,.28);border-radius:28px 0 0 28px;overflow:hidden;transform:translateX(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;}
 .page2Drawer.open{transform:translateX(0);}
 .page2Drawer.dragging{transition:none;}
 
@@ -279,20 +290,24 @@ height:40px;background:#ffffff;border-top:1px solid #e5e5e5;font-size:11px;
 .page2HeaderTop{display:flex;align-items:flex-start;justify-content:space-between;position:relative;z-index:1;}
 .page2Title{font-size:19px;font-weight:800;color:#fff;letter-spacing:.2px;}
 .page2Subtitle{font-size:11.5px;color:rgba(255,255,255,.68);margin-top:4px;font-weight:600;}
-.page2CloseBtn{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.16);border:none;font-size:14px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s ease;}
-.page2CloseBtn:active{background:rgba(255,255,255,.32);}
+.page2CloseBtn{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.16);border:none;font-size:14px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s ease,transform .3s cubic-bezier(.34,1.56,.64,1);-webkit-tap-highlight-color:transparent;}
+.page2CloseBtn:active{background:rgba(255,255,255,.32);transform:scale(.82) rotate(90deg);}
 
-.page2Tabs{display:flex;gap:6px;padding:14px 14px 0;flex-shrink:0;background:#f6f8fc;}
-.page2Tab{flex:1;padding:10px 4px;border:none;background:#eef1f6;color:#7a8494;font-weight:700;font-size:11px;border-radius:14px;cursor:pointer;font-family:inherit;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;transition:background .15s ease,color .15s ease,box-shadow .15s ease;}
-.page2Tab .tabIcon{font-size:16px;}
-.page2Tab.active{background:#001f5b;color:#fff;box-shadow:0 6px 14px rgba(0,31,91,.28);}
+.page2Tabs{display:flex;gap:6px;padding:14px 14px 0;flex-shrink:0;background:#f6f8fc;position:relative;}
+.page2TabIndicator{position:absolute;top:14px;bottom:0;border-radius:14px;background:#001f5b;box-shadow:0 6px 14px rgba(0,31,91,.28);transition:left .34s cubic-bezier(.4,0,.2,1),width .34s cubic-bezier(.4,0,.2,1);z-index:0;pointer-events:none;}
+.page2Tab{flex:1;padding:10px 4px;border:none;background:transparent;color:#7a8494;font-weight:700;font-size:11px;border-radius:14px;cursor:pointer;font-family:inherit;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;transition:color .2s ease;position:relative;z-index:1;-webkit-tap-highlight-color:transparent;}
+.page2Tab .tabIcon{font-size:16px;transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
+.page2Tab.active{color:#fff;}
+.page2Tab.active .tabIcon{transform:scale(1.12);}
 .page2Content{flex:1;overflow-y:auto;padding:16px 14px 6px;}
 .page2Panel{display:none;}
 .page2Panel.active{display:block;animation:page2FadeIn .18s ease;}
 @keyframes page2FadeIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
 .page2Hint{text-align:center;color:#b7bec9;font-size:11px;padding:10px 16px 16px;flex-shrink:0;font-weight:600;}
 
-.carManageCard{background:#fff;border-radius:18px;padding:12px 12px 4px;margin-bottom:10px;border:1px solid #eef1f6;box-shadow:0 2px 8px rgba(20,30,60,.05);}
+.carManageCard{background:#fff;border-radius:18px;padding:12px 12px 4px;margin-bottom:10px;border:1px solid #eef1f6;box-shadow:0 2px 8px rgba(20,30,60,.05);transition:box-shadow .3s ease,border-color .3s ease;}
+@keyframes carCardNewPop{0%{transform:scale(.93);opacity:0;}60%{transform:scale(1.015);opacity:1;}100%{transform:scale(1);}}
+.carCardNewFlash{animation:carCardNewPop .4s cubic-bezier(.34,1.56,.64,1);border-color:#0047ff;box-shadow:0 4px 16px rgba(0,71,255,.18);}
 .carManageCard .carSettingsRow{margin-bottom:8px;}
 .rentSwitch{display:flex;align-items:center;justify-content:space-between;gap:9px;font-size:12.5px;color:#5a6270;font-weight:700;padding:9px 2px 10px;cursor:pointer;border-top:1px dashed #eef1f6;}
 .rentSwitch input{display:none;}
@@ -309,6 +324,113 @@ height:40px;background:#ffffff;border-top:1px solid #e5e5e5;font-size:11px;
 .carReturnBtn:active{background:#bdf0d1;}
 .rentedAccruedBig{margin-top:10px;padding:10px 12px;background:linear-gradient(135deg,#eef4ff,#e3ecff);border-radius:13px;font-size:16px;font-weight:800;color:#0047ff;}
 .rentedAccruedBig span{display:block;font-size:10.5px;font-weight:700;color:#7a8494;margin-top:1px;}
+
+/* ---------- красивые "папки" в настройках (аккордеон) ---------- */
+.settingsFolder{background:#f6f8fb;border-radius:18px;margin-bottom:12px;overflow:hidden;border:1.5px solid #eef1f6;transition:border-color .2s ease,box-shadow .2s ease;}
+.settingsFolder.open{border-color:#d6e2ff;box-shadow:0 4px 16px rgba(0,71,255,.07);}
+.settingsFolderHeader{display:flex;align-items:center;gap:12px;padding:13px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;}
+.settingsFolderHeader:active{background:rgba(0,0,0,.02);}
+.settingsFolderIconBadge{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;background:linear-gradient(135deg,#eaf0ff,#dbe6ff);transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
+.settingsFolder.open .settingsFolderIconBadge{transform:scale(1.08) rotate(-4deg);}
+.settingsFolderHeaderText{flex:1;min-width:0;}
+.settingsFolderTitle{font-weight:800;font-size:13.5px;color:#1a1f29;}
+.settingsFolderHint{font-size:10.5px;color:#8a93a3;margin-top:2px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.settingsFolderChev{color:#9aa3b0;font-size:11px;flex-shrink:0;transition:transform .32s cubic-bezier(.34,1.56,.64,1);}
+.settingsFolder.open .settingsFolderChev{transform:rotate(180deg);color:#0047ff;}
+.settingsFolderBody{display:none;padding:0 14px 16px;}
+.settingsFolder.open .settingsFolderBody{display:block;animation:page2FadeIn .22s ease;}
+.settingsFolderBody .settingsSectionDesc{margin-top:0;}
+
+/* ---------- переключатель темы ---------- */
+.themeOptRow{display:flex;gap:10px;}
+.themeOpt{flex:1;min-width:0;width:auto;background:#fff;border:1.5px solid #eef1f6;border-radius:16px;padding:14px 10px;text-align:center;cursor:pointer;font-family:inherit;transition:background .15s ease,border-color .15s ease;margin-top:0;color:inherit;}
+.themeOpt:active{background:#f3f6fb;}
+.themeOpt.active{background:#eef4ff;border-color:#0047ff;}
+.themeOptIcon{font-size:22px;margin-bottom:6px;}
+.themeOptName{font-weight:800;font-size:12.5px;color:#1a1f29;}
+.themeOpt.active .themeOptName{color:#0047ff;}
+
+/* ---------- подписка ---------- */
+.subscriptionCard{display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:16px;cursor:pointer;background:linear-gradient(135deg,#fff8e1,#ffedb3);border:1.5px solid #ffe0a3;transition:transform .12s ease;}
+.subscriptionCard:active{transform:scale(.98);}
+.subscriptionCard.expired{background:linear-gradient(135deg,#fdeaea,#f8c9c9);border-color:#f3a5a5;}
+.subscriptionCardIcon{font-size:26px;flex-shrink:0;}
+.subscriptionCardInfo{flex:1;min-width:0;}
+.subscriptionCardDays{font-weight:800;font-size:14.5px;color:#8a6100;}
+.subscriptionCard.expired .subscriptionCardDays{color:#a11414;}
+.subscriptionCardHint{font-size:11px;color:#8a7440;margin-top:2px;font-weight:600;}
+.subscriptionCard.expired .subscriptionCardHint{color:#a15c5c;}
+.subscriptionCardChev{color:#9a8140;font-size:13px;flex-shrink:0;}
+.subscriptionCard.expired .subscriptionCardChev{color:#a15c5c;}
+.subReqRow{display:flex;gap:10px;}
+.subReqRow input{flex:1;min-width:0;}
+.subQrWrap{display:flex;justify-content:center;padding:12px 0 4px;}
+.subQrWrap canvas{border-radius:14px;border:1px solid #eef1f6;background:#fff;padding:8px;}
+.subRequisites{background:#f6f8fb;border-radius:16px;padding:12px 14px;margin:8px 0 14px;font-size:12.5px;line-height:1.7;color:#2a2f36;}
+.subRequisites b{color:#1a1f29;}
+
+/* ---------- чёрный список ---------- */
+.blacklistOpenBtn{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.blacklistOpenBtn .blHint{font-weight:500;color:#9aa3b0;font-size:10.5px;}
+.blacklistResultItem{padding:12px 13px;border-radius:14px;background:#fdeaea;border:1px solid #f6cfcf;margin-bottom:8px;font-size:12.5px;line-height:1.5;color:#7a1f1f;}
+.blacklistResultItem b{color:#a11414;}
+.blacklistClean{padding:16px 14px;border-radius:14px;background:#e7f9ee;border:1px solid #bdf0d1;color:#0a6b34;font-weight:700;font-size:13px;text-align:center;}
+
+/* ---------- авторизация: покрасивее ---------- */
+.authCard{background:#fff;border-radius:16px;padding:14px 14px 6px;border:1.5px solid #eef1f6;margin-bottom:6px;}
+.authCardHeader{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.authCardIcon{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,#eaf0ff,#dbe6ff);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.authCardTitle{font-weight:800;font-size:12.5px;color:#1a1f29;}
+.authCardSub{font-size:10.5px;color:#8a93a3;font-weight:600;margin-top:1px;}
+.authModeRow{background:#f0f2f6;padding:4px;border-radius:14px;}
+.authModeOpt{background:transparent;border:none;}
+.authModeOpt.active{background:#fff;border-color:transparent;box-shadow:0 2px 8px rgba(0,0,0,.08);}
+
+/* ---------- тёмная тема ---------- */
+html[data-theme="dark"] body{background:linear-gradient(180deg,#0a0e18,#070b13);color:#e7ebf3;}
+html[data-theme="dark"] .card{background:#121a2b;box-shadow:0 12px 35px rgba(0,0,0,.5);}
+html[data-theme="dark"] input,html[data-theme="dark"] select,html[data-theme="dark"] textarea{background:#1a2338;border-color:#26314a;color:#e7ebf3;}
+html[data-theme="dark"] input::placeholder,html[data-theme="dark"] textarea::placeholder{color:#5c6784;}
+html[data-theme="dark"] .label{color:#c7cedd;}
+html[data-theme="dark"] .modalCard{background:#121a2b;box-shadow:0 20px 60px rgba(0,0,0,.6);}
+html[data-theme="dark"] .modalTitle{color:#e7ebf3;}
+html[data-theme="dark"] .modalSub{color:#8b93a7;}
+html[data-theme="dark"] .modalClose{background:#1a2338;color:#c7cedd;}
+html[data-theme="dark"] .modalClose:active{background:#26314a;}
+html[data-theme="dark"] .settingsFolder{background:#141d31;border-color:#232e48;}
+html[data-theme="dark"] .settingsFolder.open{border-color:#2f4372;}
+html[data-theme="dark"] .settingsFolderTitle{color:#e7ebf3;}
+html[data-theme="dark"] .settingsFolderHint,html[data-theme="dark"] .settingsSectionDesc,html[data-theme="dark"] .settingsBackupHint{color:#8b93a7;}
+html[data-theme="dark"] .billingModeOpt,html[data-theme="dark"] .serverProfileItem,html[data-theme="dark"] .authModeOpt,html[data-theme="dark"] .serverQuickAddBtn,html[data-theme="dark"] .serverEditBox,html[data-theme="dark"] .themeOpt,html[data-theme="dark"] .authCard{background:#1a2338;border-color:#26314a;color:#c7cedd;}
+html[data-theme="dark"] .authModeRow{background:#141d31;}
+html[data-theme="dark"] .authModeOpt.active{background:#26314a;box-shadow:none;color:#e7ebf3;}
+html[data-theme="dark"] .billingModeOpt.active,html[data-theme="dark"] .themeOpt.active{background:#1c2c52;border-color:#3b63ff;}
+html[data-theme="dark"] .billingModeName,html[data-theme="dark"] .themeOptName,html[data-theme="dark"] .serverProfileName,html[data-theme="dark"] .authCardTitle{color:#e7ebf3;}
+html[data-theme="dark"] .serverProfileUrl,html[data-theme="dark"] .serverEmptyHint,html[data-theme="dark"] .authCardSub{color:#8b93a7;}
+html[data-theme="dark"] .historyDrawer,html[data-theme="dark"] .page2Drawer{background:#0d1424;}
+html[data-theme="dark"] .historyItem,html[data-theme="dark"] .carManageCard,html[data-theme="dark"] .rentedCard,html[data-theme="dark"] .historyDayFolder,html[data-theme="dark"] .carItem{background:#141d31;border-color:#232e48;box-shadow:none;}
+html[data-theme="dark"] .historyItemCar,html[data-theme="dark"] .carItemName,html[data-theme="dark"] .carEditName,html[data-theme="dark"] .page2Tab.active,html[data-theme="dark"] .historyDayFolderDate,html[data-theme="dark"] .historyDayBackTitle{color:#e7ebf3;}
+html[data-theme="dark"] .carEditName{background:transparent;}
+html[data-theme="dark"] .carNameWrap{background:#1a2338;}
+html[data-theme="dark"] .result,html[data-theme="dark"] .dailySummary{background:#1a2338;color:#e7ebf3;}
+html[data-theme="dark"] table,html[data-theme="dark"] #reportBottom,html[data-theme="dark"] #dailyBreakdown{background:#121a2b;}
+html[data-theme="dark"] th{background:#0d1424;}
+html[data-theme="dark"] td{border-color:#232e48;color:#e7ebf3;}
+html[data-theme="dark"] .footer{color:#8b93a7;}
+html[data-theme="dark"] .carPickerBtn{background:#1a2338;border-color:#26314a;color:#e7ebf3;}
+html[data-theme="dark"] .gearBtn,html[data-theme="dark"] .navBtn{background:linear-gradient(145deg,#1a2338,#121a2b);box-shadow:0 4px 12px rgba(0,0,0,.4);color:#c7d3ff;}
+html[data-theme="dark"] .settingsOpenBtn{background:#121a2b;border-color:#26314a;color:#e7ebf3;}
+html[data-theme="dark"] .rentSwitchTrack{background:#26314a;}
+html[data-theme="dark"] .page2Tabs{background:#0d1424;}
+html[data-theme="dark"] .carRentSince,html[data-theme="dark"] .contactPhone,html[data-theme="dark"] .billingModeDesc,html[data-theme="dark"] .historyItemDate,html[data-theme="dark"] .carItemPrice,html[data-theme="dark"] .historyDayFolderCount,html[data-theme="dark"] .page2Subtitle,html[data-theme="dark"] .historySubtitle{color:#8b93a7;}
+html[data-theme="dark"] .contactItem{background:#1a2338;}
+html[data-theme="dark"] .contactName{color:#e7ebf3;}
+html[data-theme="dark"] .historyDayBackBtn{background:#26314a;color:#e7ebf3;}
+html[data-theme="dark"] .subRequisites{background:#1a2338;color:#c7cedd;}
+html[data-theme="dark"] .subRequisites b{color:#e7ebf3;}
+html[data-theme="dark"] .subQrWrap canvas{background:#fff;}
+html[data-theme="dark"] .blacklistClean{background:#0f2a1c;border-color:#1f5c3c;color:#4ade80;}
+html[data-theme="dark"] .blacklistResultItem{background:#2a1414;border-color:#5c2323;color:#f87171;}
 </style>
 </head>
 
@@ -316,9 +438,9 @@ height:40px;background:#ffffff;border-top:1px solid #e5e5e5;font-size:11px;
 <div class="card">
 
 <div class="topBar">
-<button type="button" id="navLeftBtn" class="navBtn navBtnLeft" title="История расчётов">‹</button>
+<button type="button" id="navLeftBtn" class="navBtn navBtnLeft" title="История расчётов"><span class="navBtnArrow"></span><span class="navBtnRippleFx"></span></button>
 <div class="logo" id="logoBtn">Аренда авто <span class="x">X</span><span class="f">CAR</span></div>
-<button type="button" id="navRightBtn" class="navBtn navBtnRight" title="Меню">›</button>
+<button type="button" id="navRightBtn" class="navBtn navBtnRight" title="Меню"><span class="navBtnArrow"></span><span class="navBtnRippleFx"></span></button>
 </div>
 
 <div class="modalOverlay" id="contactsModal">
@@ -362,8 +484,20 @@ height:40px;background:#ffffff;border-top:1px solid #e5e5e5;font-size:11px;
 </div>
 </div>
 
+<button type="button" class="settingsOpenBtn blacklistOpenBtn" id="blacklistOpenBtn"><span>🚫 Чёрный список</span><span class="blHint" id="blacklistLastUpdatedHint">—</span></button>
 <button type="button" class="settingsOpenBtn" id="settingsOpenBtn">⚙️ Настройки приложения</button>
 
+</div>
+</div>
+
+<div class="modalOverlay" id="blacklistModal">
+<div class="modalCard">
+<button class="modalClose" id="blacklistCloseBtn">✕</button>
+<div class="modalTitle">🚫 Чёрный список</div>
+<div class="modalSub" id="blacklistSub">Обновлено: —</div>
+<input id="blacklistSearchInput" placeholder="Имя или номер телефона клиента">
+<button type="button" class="b1" id="blacklistSearchBtn" style="margin-bottom:4px;">🔍 Проверить</button>
+<div id="blacklistResults" style="margin-top:12px;"></div>
 </div>
 </div>
 
@@ -373,8 +507,60 @@ height:40px;background:#ffffff;border-top:1px solid #e5e5e5;font-size:11px;
 <div class="modalTitle">⚙️ Настройки</div>
 <div class="modalSub">Начисление аренды, аккаунт и резервная копия</div>
 
-<div class="settingsSection">
-<div class="settingsSectionTitle">Серверы</div>
+<div class="settingsFolder" id="folderSubscription">
+<div class="settingsFolderHeader" data-folder="subscription">
+<div class="settingsFolderIconBadge">👑</div>
+<div class="settingsFolderHeaderText">
+<div class="settingsFolderTitle">Подписка</div>
+<div class="settingsFolderHint" id="subscriptionFolderHint">Осталось 365 дней</div>
+</div>
+<div class="settingsFolderChev">▾</div>
+</div>
+<div class="settingsFolderBody">
+<div class="subscriptionCard" id="subscriptionCard">
+<div class="subscriptionCardIcon">👑</div>
+<div class="subscriptionCardInfo">
+<div class="subscriptionCardDays" id="subscriptionCardDays">Осталось 365 дней</div>
+<div class="subscriptionCardHint" id="subscriptionCardHint">Нажмите, чтобы продлить подписку</div>
+</div>
+<div class="subscriptionCardChev">›</div>
+</div>
+</div>
+</div>
+
+<div class="settingsFolder" id="folderTheme">
+<div class="settingsFolderHeader" data-folder="theme">
+<div class="settingsFolderIconBadge">🎨</div>
+<div class="settingsFolderHeaderText">
+<div class="settingsFolderTitle">Тема оформления</div>
+<div class="settingsFolderHint" id="themeFolderHint">Белая</div>
+</div>
+<div class="settingsFolderChev">▾</div>
+</div>
+<div class="settingsFolderBody">
+<div class="themeOptRow">
+<button type="button" class="themeOpt" id="themeOptLight" data-theme="light">
+<div class="themeOptIcon">☀️</div>
+<div class="themeOptName">Белая</div>
+</button>
+<button type="button" class="themeOpt" id="themeOptDark" data-theme="dark">
+<div class="themeOptIcon">🌙</div>
+<div class="themeOptName">Тёмная</div>
+</button>
+</div>
+</div>
+</div>
+
+<div class="settingsFolder" id="folderServers">
+<div class="settingsFolderHeader" data-folder="servers">
+<div class="settingsFolderIconBadge">🌐</div>
+<div class="settingsFolderHeaderText">
+<div class="settingsFolderTitle">Серверы</div>
+<div class="settingsFolderHint">Render, домашний, другие</div>
+</div>
+<div class="settingsFolderChev">▾</div>
+</div>
+<div class="settingsFolderBody">
 <div class="settingsSectionDesc">Сохраните несколько серверов (Render, домашний на Ubuntu и другие) и переключайтесь между ними</div>
 <div class="serverProfileList" id="serverProfileList"></div>
 <div class="serverQuickAddRow">
@@ -395,13 +581,30 @@ height:40px;background:#ffffff;border-top:1px solid #e5e5e5;font-size:11px;
 </div>
 <div class="settingsBackupHint" id="serverHint"></div>
 </div>
+</div>
 
-<div class="settingsSection">
-<div class="settingsSectionTitle">Аккаунт и синхронизация с сервером</div>
+<div class="settingsFolder" id="folderAccount">
+<div class="settingsFolderHeader" data-folder="account">
+<div class="settingsFolderIconBadge">👤</div>
+<div class="settingsFolderHeaderText">
+<div class="settingsFolderTitle">Аккаунт и синхронизация</div>
+<div class="settingsFolderHint" id="accountFolderHint">Без регистрации</div>
+</div>
+<div class="settingsFolderChev">▾</div>
+</div>
+<div class="settingsFolderBody">
 <div class="settingsSectionDesc" id="accountStatusLine">Работает без регистрации — данные хранятся только на этом устройстве</div>
 <input id="accountServerUrl" placeholder="Адрес сервера, например https://xcar.onrender.com">
 
 <div id="accountAuthBlock">
+<div class="authCard">
+<div class="authCardHeader">
+<div class="authCardIcon">🔐</div>
+<div>
+<div class="authCardTitle">Вход в аккаунт</div>
+<div class="authCardSub">Чтобы синхронизировать данные между телефонами</div>
+</div>
+</div>
 <div class="authModeRow" id="authModeRow">
 <button type="button" class="authModeOpt active" id="authTabLogin" data-mode="login">Вход</button>
 <button type="button" class="authModeOpt" id="authTabRegister" data-mode="register">Регистрация</button>
@@ -417,6 +620,7 @@ height:40px;background:#ffffff;border-top:1px solid #e5e5e5;font-size:11px;
 <button type="button" class="b3" id="accountRegisterBtn" style="display:none;">✨ Зарегистрироваться</button>
 </div>
 </div>
+</div>
 
 <div class="btnRow" id="accountConnectedBtnRow" style="display:none;">
 <button type="button" class="b1" id="accountSyncNowBtn">🔄 Синхронизировать</button>
@@ -430,9 +634,37 @@ height:40px;background:#ffffff;border-top:1px solid #e5e5e5;font-size:11px;
 <button type="button" class="settingsOpenBtn" id="accountDeleteBtn" style="display:none;margin-top:8px;border-color:#f6cfcf;color:#c62828;">Удалить аккаунт с сервера</button>
 <div class="settingsBackupHint" id="accountHint"></div>
 </div>
+</div>
 
-<div class="settingsSection">
-<div class="settingsSectionTitle">Начисление за активную аренду</div>
+<div class="settingsFolder" id="folderNav">
+<div class="settingsFolderHeader" data-folder="nav">
+<div class="settingsFolderIconBadge">🧭</div>
+<div class="settingsFolderHeaderText">
+<div class="settingsFolderTitle">Кнопки навигации</div>
+<div class="settingsFolderHint" id="navFolderHint">Стрелки показаны</div>
+</div>
+<div class="settingsFolderChev">▾</div>
+</div>
+<div class="settingsFolderBody">
+<div class="settingsSectionDesc">Стрелки слева и справа от названия «Аренда авто XCAR» открывают историю и меню</div>
+<label class="rentSwitch" id="navArrowsToggleRow">
+<input type="checkbox" id="navArrowsToggleCheck">
+<span class="rentSwitchLabel">Показывать стрелки навигации</span>
+<span class="rentSwitchTrack"><span class="rentSwitchThumb"></span></span>
+</label>
+</div>
+</div>
+
+<div class="settingsFolder" id="folderBilling">
+<div class="settingsFolderHeader" data-folder="billing">
+<div class="settingsFolderIconBadge">💳</div>
+<div class="settingsFolderHeaderText">
+<div class="settingsFolderTitle">Начисление за активную аренду</div>
+<div class="settingsFolderHint" id="billingFolderHint">Предоплата за сутки</div>
+</div>
+<div class="settingsFolderChev">▾</div>
+</div>
+<div class="settingsFolderBody">
 <div class="billingModeRow">
 <button type="button" class="billingModeOpt" id="billingModePrepay" data-mode="prepay">
 <div class="billingModeIcon">📅</div>
@@ -446,9 +678,18 @@ height:40px;background:#ffffff;border-top:1px solid #e5e5e5;font-size:11px;
 </button>
 </div>
 </div>
+</div>
 
-<div class="settingsSection">
-<div class="settingsSectionTitle">Резервная копия — машины, история и настройки</div>
+<div class="settingsFolder" id="folderBackup">
+<div class="settingsFolderHeader" data-folder="backup">
+<div class="settingsFolderIconBadge">💾</div>
+<div class="settingsFolderHeaderText">
+<div class="settingsFolderTitle">Резервная копия</div>
+<div class="settingsFolderHint">Машины, история и настройки</div>
+</div>
+<div class="settingsFolderChev">▾</div>
+</div>
+<div class="settingsFolderBody">
 <div class="btnRow">
 <button type="button" class="b1" id="settingsExportBtn">Экспортировать</button>
 <button type="button" class="b3" id="settingsImportBtn">Импортировать</button>
@@ -456,9 +697,29 @@ height:40px;background:#ffffff;border-top:1px solid #e5e5e5;font-size:11px;
 <textarea id="settingsBackupText" class="settingsBackupText" placeholder="Нажмите «Экспортировать», чтобы получить текст резервной копии, или вставьте сюда ранее сохранённый текст и нажмите «Импортировать»"></textarea>
 <div class="settingsBackupHint" id="settingsBackupHint"></div>
 </div>
+</div>
 
 <button type="button" class="historyClearBtn updateAppBtn" id="updateAppBtn" style="margin:6px auto 4px;"><span class="historyClearFill"></span><span class="historyClearLabelText">🔄 Обновить приложение (удержать 2 сек)</span></button>
 
+</div>
+</div>
+
+<div class="modalOverlay" id="subscriptionModal">
+<div class="modalCard">
+<button class="modalClose" id="subscriptionCloseBtn">✕</button>
+<div class="modalTitle">👑 Подписка XCAR</div>
+<div class="modalSub" id="subscriptionModalSub">Осталось 365 дней</div>
+
+<div class="subRequisites" id="subRequisites"></div>
+<div class="subQrWrap"><canvas id="subQrCanvas" width="160" height="160"></canvas></div>
+
+<div class="label"><span class="icon">👤</span>Ваши Ф.И.О</div>
+<input id="subClientName" placeholder="Фамилия Имя Отчество">
+<div class="label"><span class="icon">📞</span>Ваш номер телефона</div>
+<input id="subClientPhone" type="tel" placeholder="+7 900 000-00-00">
+
+<button type="button" class="b7" id="subSendRequestBtn" style="margin-top:14px;">✅ Я оплатил(а) — отправить заявку</button>
+<div class="settingsBackupHint" id="subRequestHint"></div>
 </div>
 </div>
 
@@ -581,6 +842,7 @@ height:40px;background:#ffffff;border-top:1px solid #e5e5e5;font-size:11px;
 </div>
 </div>
 <div class="page2Tabs">
+<div class="page2TabIndicator" id="page2TabIndicator"></div>
 <button type="button" class="page2Tab active" id="page2TabFleet" data-tab="fleet"><span class="tabIcon">🚘</span>Автопарк</button>
 <button type="button" class="page2Tab" id="page2TabRented" data-tab="rented"><span class="tabIcon">🔑</span>В аренде</button>
 <button type="button" class="page2Tab" id="page2TabHistory" data-tab="history"><span class="tabIcon">🕓</span>История</button>
@@ -732,13 +994,19 @@ let selectedCarIdx=null;
 
 // ---------- настройки приложения (способ начисления активной аренды) ----------
 const SETTINGS_KEY="xcarSettings";
+const SUBSCRIPTION_DEFAULT_DAYS=365;
+// сервер по умолчанию — уже подключён у каждого нового пользователя приложения,
+// добавлять вручную в Настройках не нужно
+const DEFAULT_SERVER_URL="https://xcar-kalk-klient.onrender.com";
+const DEFAULT_SERVER_ID="default-render";
 function defaultSettings(){
-return {billingMode:"prepay",account:{serverUrl:"",username:"",password:"",email:"",phone:"",connected:false},serverProfiles:[],activeServerProfileId:null,pushEnabled:false,pushEndpoint:""};
+return {billingMode:"prepay",account:{serverUrl:DEFAULT_SERVER_URL,username:"",password:"",email:"",phone:"",connected:false},serverProfiles:[{id:DEFAULT_SERVER_ID,name:"Render (XCAR)",url:DEFAULT_SERVER_URL}],activeServerProfileId:DEFAULT_SERVER_ID,pushEnabled:false,pushEndpoint:"",theme:"light",showNavArrows:true,subscriptionUntil:Date.now()+SUBSCRIPTION_DEFAULT_DAYS*86400000};
 }
 function loadSettings(){
 try{
 const raw=localStorage.getItem(SETTINGS_KEY);
-const parsed=raw?JSON.parse(raw):{};
+if(!raw) return defaultSettings(); // самый первый запуск приложения — сразу подключаем сервер по умолчанию
+const parsed=JSON.parse(raw);
 const acc=parsed.account&&typeof parsed.account==="object"?parsed.account:{};
 const profiles=Array.isArray(parsed.serverProfiles)?parsed.serverProfiles.filter(p=>p&&typeof p==="object"&&typeof p.id==="string"&&typeof p.url==="string").map(p=>({id:p.id,name:typeof p.name==="string"?p.name:"Сервер",url:p.url,ping:null})):[];
 return {
@@ -754,7 +1022,10 @@ connected:!!acc.connected
 serverProfiles:profiles,
 activeServerProfileId:typeof parsed.activeServerProfileId==="string"?parsed.activeServerProfileId:null,
 pushEnabled:!!parsed.pushEnabled,
-pushEndpoint:typeof parsed.pushEndpoint==="string"?parsed.pushEndpoint:""
+pushEndpoint:typeof parsed.pushEndpoint==="string"?parsed.pushEndpoint:"",
+theme:parsed.theme==="dark"?"dark":"light",
+showNavArrows:parsed.showNavArrows!==false,
+subscriptionUntil:typeof parsed.subscriptionUntil==="number"&&parsed.subscriptionUntil>0?parsed.subscriptionUntil:(Date.now()+SUBSCRIPTION_DEFAULT_DAYS*86400000)
 };
 }catch(e){return defaultSettings();}
 }
@@ -762,6 +1033,19 @@ function saveSettings(){
 try{localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));}catch(e){}
 }
 let settings=loadSettings();
+function applyTheme(){
+document.documentElement.setAttribute("data-theme",settings.theme==="dark"?"dark":"light");
+const meta=document.querySelector('meta[name="theme-color"]');
+if(meta) meta.setAttribute("content",settings.theme==="dark"?"#070b13":"#0b1f33");
+}
+applyTheme();
+function applyNavArrowsVisibility(){
+const v=settings.showNavArrows!==false;
+const l=document.getElementById("navLeftBtn");
+const r=document.getElementById("navRightBtn");
+if(l) l.style.display=v?"":"none";
+if(r) r.style.display=v?"":"none";
+}
 function markDirty(){
 try{localStorage.setItem("xcarLocalUpdatedAt", String(Date.now()));}catch(e){}
 }
@@ -977,10 +1261,15 @@ saveCars();
 notifyOtherDevices(`Машина «${cars[i].name}» оформлена в аренду`);
 if(i===selectedCarIdx) pricePerDay.value=space(cars[i].price);
 updateCarPickerLabel();
+flashSuccess(document.getElementById("rentSaveBtn"));
+vibrate([15,25,15]);
+playSyncSound(true);
+setTimeout(()=>{
 rentModal.classList.remove("open");
 rentModalCarIdx=null;
 renderCarManageList();
 renderRentedList();
+},280);
 });
 
 // сколько полных оплачиваемых суток накопилось у машины c к моменту atDate
@@ -1128,14 +1417,25 @@ cars[i].rentedUntil=null;
 cars[i].rentedPaid=0;
 saveCars();
 notifyOtherDevices(`Машина «${c.name}» возвращена из аренды`);
+flashSuccess(document.getElementById("completeRentSaveBtn"));
+vibrate([15,25,15]);
+playSyncSound(true);
+setTimeout(()=>{
 closeCompleteRentModal();
 renderCarManageList();
 renderRentedList();
+},280);
 });
 
 // ---------- анимированное подтверждение удаления/очистки с вибро откликом ----------
 function vibrate(pattern){
 try{if(navigator.vibrate) navigator.vibrate(pattern);}catch(e){}
+}
+function flashSuccess(el){
+if(!el) return;
+el.classList.remove("btnSuccessFlash");
+void el.offsetWidth;
+el.classList.add("btnSuccessFlash");
 }
 let confirmCallback=null;
 const confirmModal=document.getElementById("confirmModal");
@@ -1168,16 +1468,24 @@ if(cb) cb();
 });
 
 function addBlankCar(){
+if(typeof subscriptionBlocksNewCar==="function" && subscriptionBlocksNewCar()){
+vibrate([40,40,40]);
+if(typeof openSubscriptionModal==="function") openSubscriptionModal();
+return;
+}
 cars.push({name:"Новый автомобиль",price:0,rented:false,rentedSince:null,rentedUntil:null,rentedPaid:0});
 saveCars();
 renderCarManageList();
 renderCarPickerList();
 vibrate(12);
+flashSuccess(document.getElementById("carAddTopBtn"));
 requestAnimationFrame(()=>{
 const wrap=document.getElementById("carManageList");
 const lastCard=wrap.lastElementChild;
 if(lastCard){
 lastCard.scrollIntoView({behavior:"smooth",block:"nearest"});
+lastCard.classList.add("carCardNewFlash");
+setTimeout(()=>lastCard.classList.remove("carCardNewFlash"),650);
 const nameInput=lastCard.querySelector(".carEditName");
 if(nameInput){nameInput.focus();nameInput.select();}
 }
@@ -1201,9 +1509,17 @@ updateCarPickerLabel();
 // ---------- вкладки второй страницы (Автопарк / В аренде / История) ----------
 const page2Tabs=document.querySelectorAll(".page2Tab");
 const page2Panels=document.querySelectorAll(".page2Panel");
+const page2TabIndicator=document.getElementById("page2TabIndicator");
+function updatePage2TabIndicator(){
+const activeTab=document.querySelector(".page2Tab.active");
+if(!activeTab||!page2TabIndicator) return;
+page2TabIndicator.style.left=activeTab.offsetLeft+"px";
+page2TabIndicator.style.width=activeTab.offsetWidth+"px";
+}
 function selectPage2Tab(tab){
 page2Tabs.forEach(btn=>btn.classList.toggle("active",btn.dataset.tab===tab));
 page2Panels.forEach(p=>p.classList.toggle("active",p.dataset.panel===tab));
+updatePage2TabIndicator();
 const addBtn=document.getElementById("carAddTopBtn");
 if(addBtn) addBtn.style.display=(tab==="fleet")?"flex":"none";
 if(tab==="fleet") renderCarManageList();
@@ -1211,6 +1527,7 @@ if(tab==="rented") renderRentedList();
 if(tab==="history"){page2HistoryDay=null;renderHistory();}
 }
 page2Tabs.forEach(btn=>btn.addEventListener("click",()=>selectPage2Tab(btn.dataset.tab)));
+window.addEventListener("resize",()=>updatePage2TabIndicator());
 
 // ---------- история расчётов (свайп слева открывает, свайп вправо закрывает) ----------
 const HISTORY_KEY="xcarHistory";
@@ -1590,6 +1907,16 @@ historyOverlay.addEventListener("click",()=>{
 if(window.__suppressOverlayClickUntil&&Date.now()<window.__suppressOverlayClickUntil) return;
 closeHistory();
 });
+function triggerRipple(btn){
+const fx=btn.querySelector(".navBtnRippleFx");
+if(!fx) return;
+fx.classList.remove("animate");
+void fx.offsetWidth;
+fx.classList.add("animate");
+}
+document.querySelectorAll(".navBtn").forEach(btn=>{
+btn.addEventListener("pointerdown",()=>{triggerRipple(btn);vibrate(10);});
+});
 document.getElementById("navLeftBtn").addEventListener("click",openHistory);
 
 // ---------- вторая страница (меню/настройки), открывается свайпом влево ----------
@@ -1601,6 +1928,7 @@ page2Overlay.classList.add("open");
 renderCarManageList();
 renderRentedList();
 renderHistory();
+requestAnimationFrame(updatePage2TabIndicator);
 }
 function closePage2(){
 page2Drawer.classList.remove("open");
@@ -1966,12 +2294,61 @@ function renderBillingModeUI(){
 document.querySelectorAll(".billingModeOpt").forEach(btn=>{
 btn.classList.toggle("active",btn.dataset.mode===settings.billingMode);
 });
+const hint=document.getElementById("billingFolderHint");
+if(hint) hint.textContent=settings.billingMode==="persecond"?"Посекундно":"Предоплата за сутки";
 }
+
+// ---------- красивые "папки" настроек — раскрываются по нажатию ----------
+document.querySelectorAll(".settingsFolderHeader").forEach(header=>{
+header.addEventListener("click",()=>{
+const folder=header.closest(".settingsFolder");
+if(!folder) return;
+folder.classList.toggle("open");
+vibrate(8);
+});
+});
+
+// ---------- тема оформления ----------
+function renderThemeUI(){
+document.querySelectorAll(".themeOpt").forEach(btn=>{
+btn.classList.toggle("active",btn.dataset.theme===settings.theme);
+});
+const hint=document.getElementById("themeFolderHint");
+if(hint) hint.textContent=settings.theme==="dark"?"Тёмная":"Белая";
+}
+document.querySelectorAll(".themeOpt").forEach(btn=>{
+btn.addEventListener("click",()=>{
+settings.theme=btn.dataset.theme;
+saveSettings();
+applyTheme();
+renderThemeUI();
+vibrate(12);
+});
+});
+
+// ---------- показать/скрыть стрелки навигации ----------
+document.getElementById("navArrowsToggleRow").addEventListener("click",()=>{
+settings.showNavArrows=!settings.showNavArrows;
+saveSettings();
+applyNavArrowsVisibility();
+renderNavArrowsUI();
+vibrate(12);
+});
+function renderNavArrowsUI(){
+const check=document.getElementById("navArrowsToggleCheck");
+if(check) check.checked=settings.showNavArrows!==false;
+const hint=document.getElementById("navFolderHint");
+if(hint) hint.textContent=settings.showNavArrows!==false?"Стрелки показаны":"Стрелки скрыты";
+}
+
 document.getElementById("settingsOpenBtn").addEventListener("click",()=>{
 contactsModal.classList.remove("open");
 renderBillingModeUI();
 renderAccountUI();
 renderServerProfiles();
+renderThemeUI();
+renderNavArrowsUI();
+renderSubscriptionUI();
 document.getElementById("settingsBackupText").value="";
 document.getElementById("settingsBackupHint").textContent="";
 settingsModal.classList.add("open");
@@ -2001,6 +2378,7 @@ try{
 await navigator.clipboard.writeText(text);
 hint.textContent="Готово — скопировано в буфер обмена ✓";
 hint.style.color="#0a9a4a";
+flashSuccess(document.getElementById("settingsExportBtn"));
 }catch(e){
 ta.focus();
 ta.select();
@@ -2048,6 +2426,11 @@ if(Array.isArray(parsed.settings.serverProfiles)){
 settings.serverProfiles=parsed.settings.serverProfiles.filter(p=>p&&typeof p==="object"&&typeof p.id==="string"&&typeof p.url==="string").map(p=>({id:p.id,name:typeof p.name==="string"?p.name:"Сервер",url:p.url}));
 settings.activeServerProfileId=typeof parsed.settings.activeServerProfileId==="string"?parsed.settings.activeServerProfileId:null;
 }
+// тема оформления и видимость стрелок навигации — тоже переносим,
+// а вот остаток дней подписки НЕ трогаем (это привязано к конкретному
+// устройству/аккаунту, а не к резервной копии данных)
+if(typeof parsed.settings.theme==="string") settings.theme=parsed.settings.theme==="dark"?"dark":"light";
+if(typeof parsed.settings.showNavArrows==="boolean") settings.showNavArrows=parsed.settings.showNavArrows;
 }
 selectedCarIdx=null;
 saveCars();
@@ -2061,8 +2444,14 @@ updateCarPickerLabel();
 renderBillingModeUI();
 renderAccountUI();
 renderServerProfiles();
+applyTheme();
+renderThemeUI();
+applyNavArrowsVisibility();
+renderNavArrowsUI();
 hint.textContent="Импортировано ✓";
 hint.style.color="#0a9a4a";
+flashSuccess(document.getElementById("settingsImportBtn"));
+vibrate([15,25,15]);
 }
 });
 });
@@ -2342,10 +2731,12 @@ throw new Error(errData.error||("HTTP "+resp.status));
 }
 const data=await resp.json();
 settings.account.connected=true;
+if(typeof data.subscriptionUntil==="number"&&data.subscriptionUntil>0) settings.subscriptionUntil=data.subscriptionUntil;
 saveSettings();
 try{localStorage.setItem("xcarLocalUpdatedAt", String(data.updatedAt||Date.now()));}catch(e){}
 try{localStorage.setItem("xcarLastSyncAt", String(Date.now()));}catch(e){}
 renderAccountUI();
+renderSubscriptionUI();
 vibrate([15,25,15]);
 playSyncSound(true);
 setAccountHint("Аккаунт создан ✓",false);
@@ -2386,6 +2777,7 @@ settings.billingMode=data.payload.settings.billingMode==="persecond"?"persecond"
 }
 if(typeof data.email==="string") settings.account.email=data.email;
 if(typeof data.phone==="string") settings.account.phone=data.phone;
+if(typeof data.subscriptionUntil==="number"&&data.subscriptionUntil>0) settings.subscriptionUntil=data.subscriptionUntil;
 saveCars();
 saveHistory();
 try{localStorage.setItem("xcarLocalUpdatedAt", String(data.updatedAt||Date.now()));}catch(e){}
@@ -2399,6 +2791,7 @@ renderHistory();
 updateCarPickerLabel();
 renderBillingModeUI();
 renderAccountUI();
+renderSubscriptionUI();
 vibrate([15,25,15]);
 playSyncSound(true);
 setAccountHint("Вход выполнен ✓",false);
@@ -2463,11 +2856,13 @@ renderHistory();
 updateCarPickerLabel();
 renderBillingModeUI();
 }
+if(typeof data.subscriptionUntil==="number"&&data.subscriptionUntil>0) settings.subscriptionUntil=data.subscriptionUntil;
 settings.account.connected=true;
 saveSettings();
 try{localStorage.setItem("xcarLastSyncAt", String(Date.now()));}catch(e){}
 renderAccountUI();
-if(opts.manual){vibrate([15,25,15]);playSyncSound(true);setAccountHint("Синхронизировано ✓",false);}
+renderSubscriptionUI();
+if(opts.manual){vibrate([15,25,15]);playSyncSound(true);setAccountHint("Синхронизировано ✓",false);flashSuccess(document.getElementById("accountSyncNowBtn"));}
 }).catch(err=>{
 if(err&&(err.status===401||err.status===404)){
 // сохранённые логин/пароль больше не подходят на сервере — выходим локально
@@ -2828,6 +3223,195 @@ if(isIos && !isInStandalone){
 document.getElementById("iosHint").style.display="block";
 }
 })();
+
+// ==================== ПОДПИСКА ====================
+// ⚠️ ИДРИС: замените реквизиты ниже на свои настоящие — они показываются
+// клиентам в окне подписки вместе с QR-кодом для оплаты переводом.
+const SUBSCRIPTION_PRICE_TEXT="500 ₽ / месяц";
+const SUBSCRIPTION_BANK="Сбербанк";
+const SUBSCRIPTION_CARD_NUMBER="0000 0000 0000 0000";
+const SUBSCRIPTION_RECIPIENT="Бечиев Идрис Хож-Муратович";
+const SUBSCRIPTION_PHONE="+7 928 739-00-92";
+
+function getSubscriptionDaysLeft(){
+return Math.max(0,Math.ceil(((settings.subscriptionUntil||0)-Date.now())/86400000));
+}
+function isSubscriptionExpired(){
+return getSubscriptionDaysLeft()<=0;
+}
+function subscriptionBlocksNewCar(){
+return isSubscriptionExpired() && cars.length>=1;
+}
+function renderSubscriptionUI(){
+const days=getSubscriptionDaysLeft();
+const expired=isSubscriptionExpired();
+const dayWord=(n)=>{
+const n10=n%10,n100=n%100;
+if(n100>=11&&n100<=14) return "дней";
+if(n10===1) return "день";
+if(n10>=2&&n10<=4) return "дня";
+return "дней";
+};
+const daysText=expired?"Подписка истекла":`Осталось ${days} ${dayWord(days)}`;
+const card=document.getElementById("subscriptionCard");
+const cardDays=document.getElementById("subscriptionCardDays");
+const cardHint=document.getElementById("subscriptionCardHint");
+const folderHint=document.getElementById("subscriptionFolderHint");
+if(card) card.classList.toggle("expired",expired);
+if(cardDays) cardDays.textContent=daysText;
+if(cardHint) cardHint.textContent=expired?"Доступна только 1 машина — нажмите, чтобы продлить":"Нажмите, чтобы продлить подписку";
+if(folderHint) folderHint.textContent=daysText;
+}
+function renderSubQr(){
+const canvas=document.getElementById("subQrCanvas");
+if(!canvas) return;
+const ctx=canvas.getContext("2d");
+ctx.clearRect(0,0,canvas.width,canvas.height);
+if(typeof qrcode==="undefined"){
+ctx.fillStyle="#8a93a3";
+ctx.font="11px system-ui";
+ctx.textAlign="center";
+ctx.fillText("QR недоступен офлайн",canvas.width/2,canvas.height/2);
+return;
+}
+try{
+const text=`Оплата подписки XCAR\n${SUBSCRIPTION_PRICE_TEXT}\nБанк: ${SUBSCRIPTION_BANK}\nКарта: ${SUBSCRIPTION_CARD_NUMBER}\nПолучатель: ${SUBSCRIPTION_RECIPIENT}\nТел: ${SUBSCRIPTION_PHONE}`;
+const qr=qrcode(0,"M");
+qr.addData(text);
+qr.make();
+const count=qr.getModuleCount();
+const size=canvas.width;
+const cell=size/count;
+ctx.fillStyle="#fff";
+ctx.fillRect(0,0,size,size);
+ctx.fillStyle="#001f5b";
+for(let r=0;r<count;r++){
+for(let c=0;c<count;c++){
+if(qr.isDark(r,c)) ctx.fillRect(c*cell,r*cell,cell+0.5,cell+0.5);
+}
+}
+}catch(e){}
+}
+function openSubscriptionModal(){
+document.getElementById("subscriptionModalSub").textContent=isSubscriptionExpired()?"Подписка истекла — доступна только 1 машина":`Осталось ${getSubscriptionDaysLeft()} дней`;
+document.getElementById("subRequisites").innerHTML=
+`<b>Стоимость:</b> ${escapeHtml(SUBSCRIPTION_PRICE_TEXT)}<br>`+
+`<b>Банк:</b> ${escapeHtml(SUBSCRIPTION_BANK)}<br>`+
+`<b>Номер карты:</b> ${escapeHtml(SUBSCRIPTION_CARD_NUMBER)}<br>`+
+`<b>Получатель:</b> ${escapeHtml(SUBSCRIPTION_RECIPIENT)}<br>`+
+`<b>Телефон:</b> ${escapeHtml(SUBSCRIPTION_PHONE)}`;
+document.getElementById("subClientName").value="";
+document.getElementById("subClientPhone").value=settings.account.phone||"";
+document.getElementById("subRequestHint").textContent="";
+document.getElementById("subscriptionModal").classList.add("open");
+renderSubQr();
+}
+document.getElementById("subscriptionCard").addEventListener("click",()=>{
+vibrate(10);
+openSubscriptionModal();
+});
+document.getElementById("subscriptionCloseBtn").addEventListener("click",()=>{
+document.getElementById("subscriptionModal").classList.remove("open");
+});
+document.getElementById("subscriptionModal").addEventListener("click",(e)=>{
+if(e.target.id==="subscriptionModal") e.target.classList.remove("open");
+});
+document.getElementById("subSendRequestBtn").addEventListener("click",async()=>{
+const name=document.getElementById("subClientName").value.trim();
+const phone=document.getElementById("subClientPhone").value.trim();
+const hint=document.getElementById("subRequestHint");
+if(!name||!phone){hint.textContent="Укажите Ф.И.О и номер телефона";hint.style.color="#c62828";vibrate(20);return;}
+const base=(settings.account.serverUrl||"").trim().replace(/\/+$/,"");
+if(!base){
+hint.innerHTML=`Сервер не настроен — свяжитесь с Идрисом напрямую: <a href="tel:${SUBSCRIPTION_PHONE.replace(/\s+/g,"")}">${escapeHtml(SUBSCRIPTION_PHONE)}</a>`;
+hint.style.color="#5a6270";
+return;
+}
+hint.textContent="Отправка заявки…";
+hint.style.color="#5a6270";
+try{
+const resp=await fetch(base+"/api/subscription/request",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({username:settings.account.username||"",name,phone})
+});
+if(!resp.ok) throw new Error("HTTP "+resp.status);
+hint.textContent="Заявка отправлена ✓ Идрис проверит оплату и подключит подписку";
+hint.style.color="#0a9a4a";
+flashSuccess(document.getElementById("subSendRequestBtn"));
+vibrate([15,25,15]);
+}catch(e){
+hint.textContent="Не удалось отправить заявку — проверьте соединение";
+hint.style.color="#c62828";
+vibrate([40,40,40]);
+}
+});
+
+// ==================== ЧЁРНЫЙ СПИСОК ====================
+async function refreshBlacklistMeta(){
+const base=(settings.account.serverUrl||"").trim().replace(/\/+$/,"");
+const hintEl=document.getElementById("blacklistLastUpdatedHint");
+if(!base){if(hintEl) hintEl.textContent="сервер не настроен";return;}
+try{
+const resp=await fetch(base+"/api/blacklist/meta",{cache:"no-store"});
+if(!resp.ok) throw new Error("HTTP "+resp.status);
+const data=await resp.json();
+const text=data.lastUpdatedAt?("обновлено "+new Date(data.lastUpdatedAt).toLocaleDateString("ru-RU")):"пока пусто";
+if(hintEl) hintEl.textContent=text;
+document.getElementById("blacklistSub").textContent=data.lastUpdatedAt?("Обновлено: "+new Date(data.lastUpdatedAt).toLocaleString("ru-RU")):"Обновлено: —";
+}catch(e){
+if(hintEl) hintEl.textContent="недоступно";
+}
+}
+document.getElementById("blacklistOpenBtn").addEventListener("click",()=>{
+contactsModal.classList.remove("open");
+document.getElementById("blacklistSearchInput").value="";
+document.getElementById("blacklistResults").innerHTML="";
+document.getElementById("blacklistModal").classList.add("open");
+refreshBlacklistMeta();
+});
+document.getElementById("blacklistCloseBtn").addEventListener("click",()=>{
+document.getElementById("blacklistModal").classList.remove("open");
+});
+document.getElementById("blacklistModal").addEventListener("click",(e)=>{
+if(e.target.id==="blacklistModal") e.target.classList.remove("open");
+});
+async function runBlacklistSearch(){
+const q=document.getElementById("blacklistSearchInput").value.trim();
+const results=document.getElementById("blacklistResults");
+if(q.length<2){results.innerHTML=`<div class="settingsBackupHint" style="color:#c62828;">Введите минимум 2 символа</div>`;return;}
+const base=(settings.account.serverUrl||"").trim().replace(/\/+$/,"");
+if(!base){results.innerHTML=`<div class="settingsBackupHint" style="color:#c62828;">Укажите сервер в Настройках → Серверы, чтобы проверять чёрный список</div>`;return;}
+results.innerHTML=`<div class="settingsBackupHint">Проверка…</div>`;
+try{
+const resp=await fetch(base+"/api/blacklist/search",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({query:q})
+});
+if(!resp.ok) throw new Error("HTTP "+resp.status);
+const data=await resp.json();
+if(!data.results||!data.results.length){
+results.innerHTML=`<div class="blacklistClean">✅ Совпадений нет — клиент не в чёрном списке</div>`;
+vibrate(12);
+return;
+}
+results.innerHTML=data.results.map(r=>
+`<div class="blacklistResultItem"><b>⚠️ Найдено в «${escapeHtml(r.filename)}»</b><br>${escapeHtml(r.snippet)}</div>`
+).join("");
+vibrate([20,30,20]);
+}catch(e){
+results.innerHTML=`<div class="settingsBackupHint" style="color:#c62828;">Не удалось выполнить проверку — нет соединения с сервером</div>`;
+}
+}
+document.getElementById("blacklistSearchBtn").addEventListener("click",runBlacklistSearch);
+document.getElementById("blacklistSearchInput").addEventListener("keydown",e=>{
+if(e.key==="Enter") runBlacklistSearch();
+});
+
+// ---------- применяем тему и видимость стрелок при запуске ----------
+applyNavArrowsVisibility();
+renderSubscriptionUI();
 </script>
 </body>
 </html>
