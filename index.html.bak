@@ -49,16 +49,6 @@ button{width:100%;padding:14px;margin-top:9px;font-size:16px;font-weight:600;bor
 .btnRow button{margin-top:9px;}
 
 .result{margin-top:14px;padding:14px;background:#f3f6fb;font-weight:600;border-radius:14px;white-space:pre-line;}
-/* Красивое предупреждение о незаполненных данных */
-.xcValidationToast{position:fixed;left:50%;top:18px;transform:translate(-50%,-130%);z-index:99999;min-width:min(520px,calc(100vw - 28px));max-width:calc(100vw - 28px);padding:14px 18px;border:1px solid rgba(255,157,66,.34);border-radius:18px;background:linear-gradient(135deg,#fffaf3,#fff);box-shadow:0 18px 50px rgba(20,36,60,.18),0 0 0 1px rgba(255,255,255,.7) inset;color:#17263a;display:flex;align-items:center;gap:12px;opacity:0;pointer-events:none;transition:transform .38s cubic-bezier(.2,.9,.2,1),opacity .28s ease;}
-.xcValidationToast.show{transform:translate(-50%,0);opacity:1;}
-.xcValidationToast .xcWarnIcon{width:38px;height:38px;flex:0 0 38px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(145deg,#fff0cf,#ffd98e);box-shadow:0 7px 18px rgba(255,157,66,.22);font-size:20px;animation:xcWarnPulse 1.1s ease-in-out infinite;}
-.xcValidationToast .xcWarnBody{min-width:0}.xcValidationToast .xcWarnTitle{font-weight:800;font-size:14px;margin-bottom:3px}.xcValidationToast .xcWarnText{font-size:12px;color:#687789;line-height:1.35}.xcValidationToast .xcWarnClose{margin-left:auto;border:0;background:#f1f4f8;color:#536174;width:30px;height:30px;border-radius:10px;font-size:16px;cursor:pointer;}
-.xcFieldWarn{animation:xcFieldShake .48s ease;border-color:#ffb15c!important;box-shadow:0 0 0 3px rgba(255,177,92,.13),0 8px 24px rgba(255,157,66,.08)!important;}
-@keyframes xcWarnPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08);box-shadow:0 7px 24px rgba(255,157,66,.34)}}
-@keyframes xcFieldShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
-@media(max-width:620px){.xcValidationToast{top:10px;padding:12px 14px}.xcValidationToast .xcWarnIcon{width:34px;height:34px;flex-basis:34px}}
-
 
 #dailyBreakdown{display:none;margin-top:14px;background:#fff;border-radius:14px;overflow:hidden;border:1px solid #e5e5e5;}
 #dailyBreakdown .dTitle{background:#001f5b;color:#fff;padding:12px;font-weight:700;font-size:14px;text-align:center;}
@@ -390,18 +380,9 @@ height:40px;background:#ffffff;border-top:1px solid #e5e5e5;font-size:11px;
 .carAddTopBtn:hover{filter:brightness(1.06);transform:translateY(-1px);}
 .page2QuickBtn{width:38px;height:38px;border:0;border-radius:12px;background:linear-gradient(145deg,#eef3fa,#dbe4f0);color:#17304d;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 5px 14px rgba(15,35,60,.13);cursor:pointer;}
 .page2QuickBtn:active{transform:scale(.94);}
-.serverRefreshBtn{position:relative;overflow:visible;transition:transform .22s cubic-bezier(.2,.9,.25,1.3),background .28s ease,box-shadow .28s ease,color .2s ease;}
-.serverRefreshBtn .serverRefreshIcon{display:inline-flex;align-items:center;justify-content:center;transform-origin:center;transition:transform .25s ease,opacity .2s ease;}
-.serverRefreshBtn.busy{transform:scale(1.28);z-index:20;background:linear-gradient(145deg,#ffffff,#dcecff);box-shadow:0 10px 28px rgba(0,103,255,.30),0 0 0 6px rgba(0,103,255,.10);}
-.serverRefreshBtn.busy .serverRefreshIcon{animation:serverSpin .68s linear infinite;}
-.serverRefreshBtn.success{background:linear-gradient(145deg,#20d978,#08a954)!important;color:#fff!important;box-shadow:0 10px 28px rgba(16,185,89,.34),0 0 0 6px rgba(16,185,89,.12);transform:scale(1.12);}
-.serverRefreshBtn.success .serverRefreshIcon{animation:serverSuccess .5s cubic-bezier(.2,.9,.25,1.4) both;}
-.serverRefreshBtn.error{background:linear-gradient(145deg,#ff5b5b,#d92727)!important;color:#fff!important;box-shadow:0 10px 28px rgba(220,38,38,.34),0 0 0 6px rgba(220,38,38,.12);transform:scale(1.12);}
-.serverRefreshBtn.error .serverRefreshIcon{animation:serverError .45s ease both;}
+.serverRefreshBtn{position:relative;}
+.serverRefreshBtn.busy .serverRefreshIcon{animation:serverSpin .7s linear infinite;}
 @keyframes serverSpin{to{transform:rotate(360deg)}}
-@keyframes serverSuccess{0%{transform:scale(.35) rotate(-20deg);opacity:.2}65%{transform:scale(1.25) rotate(8deg);opacity:1}100%{transform:scale(1) rotate(0);opacity:1}}
-@keyframes serverError{0%{transform:scale(.35);opacity:.2}55%{transform:scale(1.22);opacity:1}75%{transform:scale(.92)}100%{transform:scale(1)}}
-@media (prefers-reduced-motion:reduce){.serverRefreshBtn,.serverRefreshBtn .serverRefreshIcon{animation:none!important;transition:none!important}}
 .fleetViewSwitch{display:none!important;}
 .cardViewMenu{position:fixed;inset:0;display:none;align-items:flex-end;justify-content:center;background:rgba(7,18,31,.48);backdrop-filter:blur(8px);z-index:1100;padding:16px;box-sizing:border-box;}
 .cardViewMenu.open{display:flex;}
@@ -488,11 +469,11 @@ html[data-theme="dark"] .carEditLongHint{color:#71819a;}
 /* ---- фото/аватар машины — общий для всех трёх видов карточек ---- */
 .carPhotoAvatar{position:relative;flex-shrink:0;border-radius:14px;overflow:hidden;background:linear-gradient(135deg,#eaf0ff,#dbe6ff);display:flex;align-items:center;justify-content:center;}
 .carPhotoAvatar img{width:100%;height:100%;object-fit:cover;display:block;}
-.carPhotoAvatar{cursor:pointer;-webkit-tap-highlight-color:transparent;}
-.carPhotoAvatar:focus-visible{outline:3px solid rgba(0,102,255,.25);outline-offset:2px;}
 .carPhotoAvatar .carPhotoEmoji{font-size:20px;}
+.carPhotoBtn{position:absolute;right:-3px;bottom:-3px;width:22px;height:22px;border-radius:50%;border:2px solid #fff;background:#0047ff;color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 6px rgba(0,71,255,.4);padding:0;-webkit-tap-highlight-color:transparent;}
 .carManageCard.styleList .carPhotoAvatar{width:40px;height:40px;border-radius:12px;}
 .carManageCard.styleList .carPhotoAvatar .carPhotoEmoji{font-size:17px;}
+.carManageCard.styleList .carPhotoBtn{width:17px;height:17px;font-size:8px;}
 
 /* ---- ПЛИТКА: сетка 2 колонки, крупное фото сверху ---- */
 .carListWrap.viewTile{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start;}
@@ -526,6 +507,7 @@ html[data-theme="dark"] .carEditLongHint{color:#71819a;}
 .premiumVisual .carPhotoAvatar{position:absolute;inset:0;width:100%;height:100%;border-radius:0;background:linear-gradient(135deg,#dce9f7,#f5f8fb);}
 .premiumVisual .carPhotoAvatar img{object-fit:cover;}
 .premiumVisual .carPhotoAvatar .carPhotoEmoji{font-size:62px;filter:drop-shadow(0 8px 14px rgba(0,0,0,.12));}
+.premiumVisual .carPhotoBtn{right:12px;bottom:12px;width:34px;height:34px;font-size:13px;border-width:2px;background:rgba(255,255,255,.94);color:#173b67;box-shadow:0 6px 18px rgba(0,0,0,.16);backdrop-filter:blur(8px);}
 .premiumShade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,16,30,.02) 25%,rgba(4,16,30,.58) 100%);pointer-events:none;}
 .premiumTopBadge{position:absolute;left:14px;bottom:14px;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.92);color:#173b67;font-size:10px;font-weight:900;letter-spacing:.4px;box-shadow:0 5px 14px rgba(0,0,0,.12);backdrop-filter:blur(8px);}
 .carManageCard.stylePremium .carDeleteBtn{position:absolute;right:12px;top:12px;width:34px;height:34px;border-radius:11px;background:rgba(255,255,255,.92);border:1px solid rgba(255,255,255,.72);box-shadow:0 6px 16px rgba(0,0,0,.14);z-index:3;}
@@ -1504,8 +1486,6 @@ html[data-theme="dark"] .navBtn::before{background:#122033;border-color:#2a3b50;
 <div class="carEditModalBtns"><button type="button" class="b1" id="carEditCancelBtn">Отмена</button><button type="button" class="b7" id="carEditSaveBtn">Сохранить</button></div>
 </div>
 </div>
-<div class="xcValidationToast" id="xcValidationToast" role="alert" aria-live="polite"><div class="xcWarnIcon">⚠️</div><div class="xcWarnBody"><div class="xcWarnTitle">Нужно заполнить данные</div><div class="xcWarnText" id="xcValidationText">Проверьте выделенные поля.</div></div><button class="xcWarnClose" type="button" id="xcValidationClose">✕</button></div>
-
 <div class="calculatorScroll">
 <button id="installBtn">📲 Установить приложение</button>
 <div id="iosHint" class="iosHint">
@@ -1588,8 +1568,8 @@ const todayStr=now.getFullYear()+"-"+pad(now.getMonth()+1)+"-"+pad(now.getDate()
 const timeStr=pad(now.getHours())+":"+pad(now.getMinutes());
 document.getElementById("startDate").value=todayStr;
 document.getElementById("startTime").value=timeStr;
-document.getElementById("endDate").value=todayStr;
-document.getElementById("endTime").value="";
+document.getElementById("endTime").value=timeStr;
+document.getElementById("endDate").value="";
 })();
 
 ["pricePerDay","pricePerHour","oldDebt","paid"].forEach(id=>{
@@ -1754,7 +1734,7 @@ el.textContent=`Машин: ${cars.length} · В аренде: ${rentedCount}`;
 }
 
 function carPhotoAvatarHtml(c,i){
-return `<div class="carPhotoAvatar" data-idx="${i}" role="button" tabindex="0" title="Изменить фото">${c.logo?`<img src="${c.logo}" alt="">`:(c.photo?`<img src="${c.photo}" alt="">`:`<span class="carPhotoEmoji">🚗</span>`)}</div>`;
+return `<div class="carPhotoAvatar">${c.logo?`<img src="${c.logo}" alt="">`:(c.photo?`<img src="${c.photo}" alt="">`:`<span class="carPhotoEmoji">🚗</span>`)}<button type="button" class="carPhotoBtn" data-idx="${i}" title="Добавить фото">📷</button></div>`;
 }
 function renderCarManageList(){
 const wrap=document.getElementById("carManageList");
@@ -1841,19 +1821,11 @@ openCompleteRentModal(i);
 renderCarManageList();
 }
 });
-const photoAvatar=card.querySelector(".carPhotoAvatar");
-if(photoAvatar){
-const openPhotoPicker=(e)=>{
-e.stopPropagation();
+card.querySelector(".carPhotoBtn").addEventListener("click",()=>{
 carPhotoTargetIdx=i;
 const fileInput=document.getElementById("carPhotoFileInput");
 if(fileInput) fileInput.click();
-};
-photoAvatar.addEventListener("click",openPhotoPicker);
-photoAvatar.addEventListener("keydown",e=>{
-if(e.key==="Enter"||e.key===" "){e.preventDefault();openPhotoPicker(e);}
 });
-}
 card.querySelector(".carDeleteBtn").addEventListener("click",()=>{
 showConfirm({
 title:"Удалить автомобиль?",
@@ -1882,7 +1854,7 @@ card.appendChild(statusRow);
 const hint=document.createElement("div");hint.className="carEditLongHint";hint.textContent="Удерживайте карточку 1,5 сек — изменить";card.appendChild(hint);
 attachCarHold(card,i);
 card.addEventListener("click",e=>{
-if(e.target.closest("button,input,.carPhotoAvatar")) return;
+if(e.target.closest("button,input,.carPhotoBtn")) return;
 if(card.__longPressed){card.__longPressed=false;return;}
 });
 wrap.appendChild(card);
@@ -2933,66 +2905,9 @@ const d=new Date(dateStr+"T00:00");
 return fmtDate(d)+(timeStr?" "+timeStr:"");
 }
 
-const XC_REQUIRED_FIELDS=[
-  ["carPickerBtn","Автомобиль"],
-  ["pricePerDay","Цена за сутки"],
-  ["startDate","Дата начала"],
-  ["endDate","Дата окончания"]
-];
-let xcWarnTimer=null;
-function clearFieldWarnings(){
-  document.querySelectorAll(".xcFieldWarn").forEach(el=>el.classList.remove("xcFieldWarn"));
-}
-function showValidationWarning(message, ids=[]){
-  clearFieldWarnings();
-  ids.forEach(id=>{const el=document.getElementById(id);if(el) el.classList.add("xcFieldWarn");});
-  const toast=document.getElementById("xcValidationToast");
-  const text=document.getElementById("xcValidationText");
-  if(!toast||!text)return;
-  text.textContent=message;
-  toast.classList.remove("show");
-  void toast.offsetWidth;
-  toast.classList.add("show");
-  clearTimeout(xcWarnTimer);
-  xcWarnTimer=setTimeout(()=>toast.classList.remove("show"),4200);
-  try{navigator.vibrate?.([20,35,20]);}catch(e){}
-}
-function validateCalculatorInputs(){
-  const missing=[];
-  XC_REQUIRED_FIELDS.forEach(([id,label])=>{
-    const el=document.getElementById(id);
-    const value=el?.value?.trim?.()||"";
-    if(id==="carPickerBtn"){
-      if(selectedCarIdx===null || !cars[selectedCarIdx]) missing.push([id,label]);
-    }else if(!value || num(value)<=0 && (id==="pricePerDay")){
-      missing.push([id,label]);
-    }
-  });
-  // Если обе даты совпадают, расчёт возможен только с двумя временами.
-  if(startDate.value && endDate.value && startDate.value===endDate.value){
-    if(!startTime.value) missing.push(["startTime","Время начала"]);
-    if(!endTime.value) missing.push(["endTime","Время окончания"]);
-    if(startTime.value && endTime.value && !pricePerHour.value.trim()) missing.push(["pricePerHour","Цена за час"]);
-  }
-  if(missing.length){
-    const labels=missing.map(x=>x[1]);
-    showValidationWarning("Заполните: "+labels.join(", ")+".",missing.map(x=>x[0]));
-    const first=document.getElementById(missing[0][0]);
-    first?.scrollIntoView?.({behavior:"smooth",block:"center"});
-    if(first?.focus && first.tagName!=="BUTTON") setTimeout(()=>first.focus({preventScroll:true}),220);
-    return false;
-  }
-  return true;
-}
-
-document.getElementById("xcValidationClose")?.addEventListener("click",()=>{
-  document.getElementById("xcValidationToast")?.classList.remove("show");
-  clearTimeout(xcWarnTimer);
-});
-
 function getDuration(){
 if(!startDate.value||!endDate.value){
-showValidationWarning("Заполните дату начала и дату окончания.",[!startDate.value?"startDate":null,!endDate.value?"endDate":null].filter(Boolean));
+alert("Заполните дату начала и окончания");
 return null;
 }
 const hasTime=!!(startTime.value&&endTime.value);
@@ -3005,10 +2920,10 @@ start=new Date(startDate.value+"T00:00");
 end=new Date(endDate.value+"T00:00");
 }
 const diffMs=end-start;
-if(diffMs<0){showValidationWarning("Дата и время окончания должны быть позже начала.",["endDate","endTime"]);return null;}
+if(diffMs<0){alert("Дата/время окончания должны быть позже начала");return null;}
 
 if(hasTime){
-if(diffMs===0){showValidationWarning("Дата и время окончания должны быть позже начала.",["endDate","endTime"]);return null;}
+if(diffMs===0){alert("Дата/время окончания должны быть позже начала");return null;}
 const totalHoursExact=diffMs/3600000;
 const totalHoursCeil=Math.ceil(totalHoursExact-1e-9);
 const fullDays=Math.floor(totalHoursCeil/24);
@@ -3016,7 +2931,7 @@ const remHours=totalHoursCeil-fullDays*24;
 return {fullDays,remHours,hasTime,start,end};
 }else{
 const fullDays=Math.round(diffMs/86400000);
-if(fullDays<=0){showValidationWarning("Дата окончания должна быть позже даты начала.",["endDate"]);return null;}
+if(fullDays<=0){alert("Дата окончания должна быть позже даты начала");return null;}
 return {fullDays,remHours:0,hasTime,start,end};
 }
 }
@@ -3026,7 +2941,6 @@ return ("0"+d.getDate()).slice(-2)+"."+("0"+(d.getMonth()+1)).slice(-2)+"."+d.ge
 }
 
 function calculate(){
-if(!validateCalculatorInputs()) return;
 const dayPrice=num(pricePerDay.value);
 const hourPrice=num(pricePerHour.value);
 const oldDebtVal=num(oldDebt.value);
@@ -3097,7 +3011,6 @@ dayKey:(()=>{const n=new Date();const p=x=>("0"+x).slice(-2);return n.getFullYea
 }
 
 function showDetailed(){
-if(!validateCalculatorInputs()) return;
 const dayPrice=num(pricePerDay.value);
 const hourPrice=num(pricePerHour.value);
 const oldDebtVal=num(oldDebt.value);
@@ -3933,9 +3846,9 @@ function syncNow(opts){
 opts=opts||{};
 if(!accountConfigured()){
 if(opts.manual){setAccountHint("Укажите логин и пароль",true);vibrate(20);}
-return Promise.resolve(false);
+return Promise.resolve();
 }
-if(syncInFlight) return Promise.resolve(false);
+if(syncInFlight) return Promise.resolve();
 syncInFlight=true;
 if(opts.manual) setAccountHint("Синхронизация…",false);
 const controller=(typeof AbortController!=="undefined")?new AbortController():null;
@@ -3978,7 +3891,6 @@ try{localStorage.setItem("xcarLastSyncAt", String(Date.now()));}catch(e){}
 renderAccountUI();
 renderSubscriptionUI();
 if(opts.manual){vibrate([15,25,15]);playSyncSound(true);setAccountHint("Синхронизировано ✓",false);flashSuccess(document.getElementById("accountSyncNowBtn"));}
-return true;
 }).catch(err=>{
 if(err&&(err.status===401||err.status===404)){
 // сохранённые логин/пароль больше не подходят на сервере — выходим локально
@@ -3986,10 +3898,9 @@ settings.account.connected=false;
 saveSettings();
 renderAccountUI();
 if(opts.manual){vibrate(20);setAccountHint("Сессия недействительна — войдите заново",true);}
-return false;
+return;
 }
 if(opts.manual){vibrate([40,40,40]);playSyncSound(false);setAccountHint("Не удалось синхронизировать — проверьте адрес сервера и соединение",true);}
-return false;
 }).finally(()=>{
 syncInFlight=false;
 });
@@ -4119,32 +4030,7 @@ document.querySelectorAll(".cardViewMenuBtn").forEach(x=>x.classList.toggle("act
 document.getElementById("cardViewMenu").classList.remove("open");
 vibrate(10);
 });
-document.getElementById("serverRefreshBtn").addEventListener("click",async()=>{
-const b=document.getElementById("serverRefreshBtn");
-if(b.dataset.refreshing==="1") return;
-b.dataset.refreshing="1";
-const icon=b.querySelector(".serverRefreshIcon");
-b.classList.remove("success","error");
-icon.textContent="⟳";
-b.classList.add("busy");
-vibrate(10);
-try{
-const ok=await Promise.resolve(syncNow({manual:true}));
- b.classList.remove("busy");
- b.classList.add(ok?"success":"error");
- icon.textContent=ok?"✓":"×";
- setTimeout(()=>{
-   b.classList.remove("success","error");
-   icon.textContent="⟳";
-   b.dataset.refreshing="0";
- },1500);
-}catch(e){
- b.classList.remove("busy");
- b.classList.add("error");
- icon.textContent="×";
- setTimeout(()=>{b.classList.remove("error");icon.textContent="⟳";b.dataset.refreshing="0";},1500);
-}
-});
+document.getElementById("serverRefreshBtn").addEventListener("click",()=>{const b=document.getElementById("serverRefreshBtn");b.classList.add("busy");Promise.resolve(syncNow({manual:true})).finally(()=>setTimeout(()=>b.classList.remove("busy"),500));});
 
 // ---------- уведомления в приложении: оформление и завершение аренды, суммы ----------
 const NOTIFY_KEY="xcarAppNotifications";
@@ -4996,6 +4882,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#8ad2a9;box-sh
 .carManageCard{background:linear-gradient(145deg,#fff,#fbfcfd);border:1px solid #e4e9ee;border-radius:22px;padding:14px;margin-bottom:12px;box-shadow:0 8px 24px rgba(19,32,45,.065);overflow:hidden}
 .carManageCard:hover{box-shadow:0 15px 34px rgba(19,32,45,.11);border-color:#d8e1e8;transform:translateY(-2px)}
 .carPhotoAvatar{background:linear-gradient(145deg,#eef4f2,#e3ebef);border:1px solid #dce5e9;box-shadow:inset 0 1px 0 rgba(255,255,255,.9)}
+.carPhotoAvatar .carPhotoBtn{background:#fff!important;color:#173b67!important;border:1px solid #dfe6eb!important;box-shadow:0 5px 12px rgba(19,32,45,.12)}
 .carSettingsRow{display:flex;align-items:center;gap:11px}.carNameWrap{min-width:0}.carEditName,.carEditPrice{border-color:transparent!important;background:transparent!important;box-shadow:none!important;padding:4px 6px!important;margin:0!important}.carEditName{font-weight:850!important;color:#142332!important}.carEditPrice{font-weight:800!important;color:#173b67!important}
 .carStatusRow{margin-top:10px;padding-top:10px;border-top:1px solid #edf1f4}.carStatusBadge{font-size:10px;padding:6px 10px;box-shadow:0 2px 6px rgba(0,0,0,.035)}
 .carStatusFree{color:#087b40;background:#eaf8f0;border-color:#c7ead5}.carStatusRented{color:#a34b08;background:#fff2e7;border-color:#ffd9bd}.carStatusReserved{color:#8c6700;background:#fff8df;border-color:#f1df9e}
@@ -5300,147 +5187,5 @@ html[data-theme="dark"][data-ui-style="new"] .page2HeaderBtns > button{
   html[data-ui-style="new"] .page2HeaderBtns .carAddTopBtn{
     width:34px!important;height:34px!important;min-width:34px!important;flex-basis:34px!important;border-radius:11px!important;
   }
-}
-
-/* ===== XCAR TILE — compact, equal-height premium grid ===== */
-.carListWrap.viewTile{
-  display:grid!important;
-  grid-template-columns:repeat(2,minmax(0,1fr))!important;
-  gap:12px!important;
-  align-items:stretch!important;
-  grid-auto-rows:270px!important;
-}
-.carListWrap.viewTile .carManageCard.styleTile{
-  box-sizing:border-box!important;
-  width:100%!important;
-  height:270px!important;
-  min-height:270px!important;
-  max-height:270px!important;
-  padding:12px!important;
-  display:grid!important;
-  grid-template-columns:minmax(0,1fr) auto!important;
-  grid-template-rows:70px 38px 32px 1fr 28px!important;
-  align-items:center!important;
-  column-gap:8px!important;
-  row-gap:5px!important;
-  position:relative!important;
-  overflow:hidden!important;
-  border-radius:20px!important;
-  background:linear-gradient(145deg,#ffffff 0%,#f8fafc 100%)!important;
-  border:1px solid #e4eaf1!important;
-  box-shadow:0 8px 24px rgba(19,43,70,.08)!important;
-  transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease!important;
-}
-.carListWrap.viewTile .carManageCard.styleTile:hover{
-  transform:translateY(-2px)!important;
-  box-shadow:0 13px 30px rgba(19,43,70,.12)!important;
-  border-color:#d5dfeb!important;
-}
-.carListWrap.viewTile .carManageCard.styleTile:active{transform:scale(.992)!important;}
-.carListWrap.viewTile .carPhotoAvatar{
-  grid-column:1 / -1!important;
-  grid-row:1!important;
-  width:70px!important;
-  height:70px!important;
-  margin:0 auto!important;
-  border-radius:18px!important;
-  background:linear-gradient(145deg,#eef4f8,#e5edf3)!important;
-  border:1px solid #dce5ec!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.9)!important;
-}
-.carListWrap.viewTile .carPhotoAvatar img{width:100%!important;height:100%!important;object-fit:cover!important;}
-.carListWrap.viewTile .carPhotoAvatar .carPhotoEmoji{font-size:30px!important;}
-.carListWrap.viewTile .carDeleteBtn{
-  position:absolute!important;
-  top:10px!important;right:10px!important;
-  width:29px!important;height:29px!important;
-  border-radius:10px!important;
-  font-size:11px!important;
-  background:#fff3f3!important;
-  border:1px solid #ffd7d7!important;
-  box-shadow:0 4px 12px rgba(210,70,70,.08)!important;
-}
-.carListWrap.viewTile .carEditName{
-  grid-column:1 / -1!important;
-  grid-row:2!important;
-  width:100%!important;
-  min-width:0!important;
-  box-sizing:border-box!important;
-  height:36px!important;
-  margin:0!important;
-  padding:0 10px!important;
-  text-align:center!important;
-  font-size:14px!important;
-  font-weight:900!important;
-  color:#172b43!important;
-  background:#f5f8fb!important;
-  border:1px solid #e8eef4!important;
-  border-radius:11px!important;
-  outline:none!important;
-}
-.carListWrap.viewTile .carEditPrice{
-  grid-column:1 / -1!important;
-  grid-row:3!important;
-  width:100%!important;
-  height:32px!important;
-  box-sizing:border-box!important;
-  margin:0!important;
-  padding:0 8px!important;
-  text-align:center!important;
-  font-size:15px!important;
-  font-weight:900!important;
-  color:#17477d!important;
-  background:transparent!important;
-  border:0!important;
-  outline:none!important;
-}
-.carListWrap.viewTile .carEditPrice::after{content:' ₽/сутки';}
-.carListWrap.viewTile .rentSwitch{
-  grid-column:1 / -1!important;
-  grid-row:4!important;
-  width:100%!important;
-  box-sizing:border-box!important;
-  margin:0!important;
-  padding:7px 2px!important;
-  border-top:1px solid #edf1f5!important;
-  border-bottom:0!important;
-  justify-content:space-between!important;
-  gap:8px!important;
-  font-size:11px!important;
-  color:#6f7d8d!important;
-}
-.carListWrap.viewTile .rentSwitchLabel{display:block!important;font-weight:800!important;}
-.carListWrap.viewTile .rentSwitchTrack{width:36px!important;height:21px!important;}
-.carListWrap.viewTile .rentSwitchThumb{width:17px!important;height:17px!important;}
-.carListWrap.viewTile .rentSwitch input:checked ~ .rentSwitchTrack .rentSwitchThumb{transform:translateX(15px)!important;}
-.carListWrap.viewTile .carRentSince{
-  grid-column:1 / -1!important;
-  grid-row:5!important;
-  width:100%!important;
-  box-sizing:border-box!important;
-  margin:0!important;
-  padding:0 2px!important;
-  text-align:center!important;
-  font-size:9px!important;
-  line-height:16px!important;
-  color:#8793a1!important;
-  white-space:nowrap!important;
-  overflow:hidden!important;
-  text-overflow:ellipsis!important;
-}
-html[data-theme="dark"] .carListWrap.viewTile .carManageCard.styleTile{
-  background:linear-gradient(145deg,#142235,#101b29)!important;
-  border-color:#2b3b50!important;
-  box-shadow:0 12px 28px rgba(0,0,0,.24)!important;
-}
-html[data-theme="dark"] .carListWrap.viewTile .carEditName{background:#19283b!important;border-color:#2b3d55!important;color:#f1f5fb!important;}
-html[data-theme="dark"] .carListWrap.viewTile .carEditPrice{color:#9bc7ff!important;}
-html[data-theme="dark"] .carListWrap.viewTile .rentSwitch{border-top-color:#2a394c!important;color:#91a0b2!important;}
-@media(max-width:390px){
-  .carListWrap.viewTile{gap:9px!important;grid-auto-rows:252px!important;}
-  .carListWrap.viewTile .carManageCard.styleTile{height:252px!important;min-height:252px!important;max-height:252px!important;padding:10px!important;grid-template-rows:62px 35px 29px 1fr 25px!important;}
-  .carListWrap.viewTile .carPhotoAvatar{width:62px!important;height:62px!important;border-radius:16px!important;}
-  .carListWrap.viewTile .carEditName{height:34px!important;font-size:13px!important;}
-  .carListWrap.viewTile .carEditPrice{height:29px!important;font-size:14px!important;}
 }
 </style>

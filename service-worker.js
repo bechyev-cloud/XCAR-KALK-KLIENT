@@ -1,4 +1,4 @@
-const CACHE_NAME = "xcar-cache-v6";
+const CACHE_NAME = "xcar-cache-2026-09-28-calc-v2";
 const ASSETS = [
   "./",
   "./index.html",
