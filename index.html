@@ -13,9 +13,9 @@
 <meta name="apple-mobile-web-app-title" content="XCAR">
 <meta name="format-detection" content="telephone=no">
 <meta name="color-scheme" content="light dark">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
@@ -784,6 +784,88 @@ html[data-theme="dark"][data-ui-style="new"] .page2HeaderBtns .page2CloseBtn{bac
 .page2CloseBtn{position:absolute;top:0;right:0;}
 .modalCard{position:relative;}
 .modalClose{position:absolute;top:14px;right:14px;z-index:20;}
+
+</style>
+<style id="xcar-s25-ultra-redesign">
+/* XCAR — Samsung Galaxy S25 Ultra full-screen redesign */
+:root{
+  --s25-bg:#f5f7fa;--s25-card:#ffffff;--s25-ink:#14202b;--s25-muted:#738091;
+  --s25-line:#e5eaf0;--s25-blue:#163a63;--s25-green:#12a95a;--s25-red:#e53935;
+  --s25-radius:24px;--s25-shadow:0 14px 38px rgba(15,30,48,.09);
+}
+html,body{width:100%;height:100%;margin:0;overflow:hidden;}
+body{
+  display:block!important;padding:0!important;min-height:100dvh!important;
+  background:linear-gradient(180deg,#f8fafc 0%,#eef2f6 100%)!important;
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+}
+.card{
+  width:100%!important;max-width:none!important;height:100dvh!important;max-height:none!important;
+  min-height:100dvh!important;box-sizing:border-box!important;border-radius:0!important;border:0!important;
+  padding:calc(10px + env(safe-area-inset-top)) 14px calc(12px + env(safe-area-inset-bottom)) 14px!important;
+  box-shadow:none!important;background:rgba(248,250,252,.98)!important;backdrop-filter:none!important;
+}
+.topBar{
+  height:58px!important;min-height:58px!important;margin:0 -2px 8px!important;
+  position:relative!important;border-bottom:1px solid #e5eaf0!important;
+}
+.logo{font-size:24px!important;letter-spacing:-1px!important;line-height:1!important;margin:0!important;}
+.navBtn{width:42px!important;height:42px!important;border-radius:14px!important;top:50%!important;background:#fff!important;border:1px solid #e4e9ef!important;box-shadow:0 6px 18px rgba(15,35,55,.08)!important;}
+.navBtnLeft{left:2px!important}.navBtnRight{right:2px!important}
+.calculatorScroll{
+  padding:0 1px calc(90px + env(safe-area-inset-bottom)) 1px!important;
+  scrollbar-width:none!important;overflow-y:auto!important;overscroll-behavior-y:contain!important;
+}
+.calculatorScroll::-webkit-scrollbar{display:none!important}
+.label{font-size:12px!important;font-weight:800!important;color:#627082!important;letter-spacing:.15px;margin-top:15px!important}
+input,select,textarea{min-height:50px!important;font-size:16px!important;border-radius:16px!important;background:#fff!important;border:1px solid #dfe6ed!important;box-shadow:0 3px 12px rgba(25,40,55,.035)!important}
+input,select{padding:13px 15px!important;margin:6px 0 10px!important}
+button{min-height:48px!important;border-radius:16px!important;font-size:15px!important}
+.btnRow{gap:8px!important}.btnRow button{margin-top:8px!important}
+.result{margin-top:12px!important;border-radius:18px!important;padding:15px!important;background:#fff!important;border:1px solid #e2e8ee!important;box-shadow:var(--s25-shadow)!important}
+#dailyBreakdown,#reportBottom{border-radius:18px!important;box-shadow:0 8px 24px rgba(15,30,48,.06)!important}
+#carPickerBtn{min-height:58px!important;border-radius:18px!important;background:#fff!important;border:1px solid #dfe6ed!important;color:#1a2a3a!important;box-shadow:0 7px 20px rgba(15,30,48,.06)!important}
+.carPickerBtn .placeholder{color:#8793a2!important}
+/* full-screen sheets */
+.modalOverlay{padding:0!important;align-items:flex-end!important;background:rgba(9,20,33,.52)!important;backdrop-filter:blur(7px)!important}
+.modalCard{width:100%!important;max-width:none!important;max-height:min(92dvh,780px)!important;border-radius:28px 28px 0 0!important;padding:22px 16px calc(18px + env(safe-area-inset-bottom))!important;box-sizing:border-box!important;box-shadow:0 -18px 55px rgba(5,20,35,.22)!important}
+.modalCard:before{border-radius:50%!important}
+.modalClose{top:14px!important;right:14px!important;width:38px!important;height:38px!important;border-radius:12px!important;background:#f0f3f6!important}
+.modalUpdateBtn{top:14px!important;right:60px!important;width:38px!important;height:38px!important}
+.modalTitle{font-size:21px!important;padding-right:80px!important;text-align:left!important}
+.modalSub{text-align:left!important;margin-bottom:14px!important}
+/* drawers */
+.page2Drawer,.historyDrawer{width:100%!important;max-width:none!important;left:0!important;right:0!important;border-radius:28px 28px 0 0!important;box-shadow:0 -18px 60px rgba(8,22,40,.24)!important}
+.page2Header{padding-top:calc(14px + env(safe-area-inset-top))!important;border-radius:28px 28px 0 0!important}
+.page2Content{padding:12px 12px calc(22px + env(safe-area-inset-bottom))!important}
+.page2Tabs{padding:10px 10px 0!important}
+.page2Tab{min-height:44px!important;font-size:12px!important}
+.page2HeaderBtns{gap:6px!important}
+.page2HeaderBtns>button,.page2HeaderBtns .carAddTopBtn{width:38px!important;height:38px!important;min-width:38px!important;flex-basis:38px!important;border-radius:12px!important}
+.fleetViewSwitch{position:sticky!important;top:0!important;z-index:10!important;margin:0 -1px 12px!important;padding:4px!important;border-radius:15px!important;backdrop-filter:blur(12px)!important}
+.fleetViewOpt{min-height:40px!important;padding:7px 4px!important}
+.carManageCard{border-radius:20px!important;padding:13px!important;margin-bottom:10px!important;box-shadow:0 7px 22px rgba(19,32,45,.065)!important}
+.carManageCard:hover{transform:none!important}
+.carPhotoAvatar{border-radius:16px!important}
+/* notes: exactly four columns on wide S25, two on narrow fallback */
+.notesModalGrid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important}
+.noteBox{min-height:108px!important;border-radius:17px!important;padding:10px!important}
+.noteText{font-size:11px!important;margin-top:9px!important}
+.noteNum{width:27px!important;height:27px!important;border-radius:9px!important}
+/* fixed action bar when present */
+#rentSaveBtn{box-shadow:0 10px 24px rgba(18,169,90,.22)!important}
+/* Android/S25 touch targets */
+button,.navBtn,.modalClose,input,select,.carPickerBtn{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+/* dark mode */
+html[data-theme="dark"] body{background:#08111d!important}
+html[data-theme="dark"] .card{background:#0b1522!important;color:#eef4fb!important}
+html[data-theme="dark"] .topBar{border-bottom-color:#223246!important}
+html[data-theme="dark"] input,html[data-theme="dark"] select,html[data-theme="dark"] textarea,html[data-theme="dark"] .result,html[data-theme="dark"] #carPickerBtn{background:#101d2d!important;border-color:#2a3c52!important;color:#eef4fb!important}
+html[data-theme="dark"] .label{color:#94a3b8!important}
+html[data-theme="dark"] .navBtn{background:#122033!important;border-color:#2a3b50!important}
+/* compact S25 landscape safety */
+@media (max-height:650px){.topBar{height:50px!important;min-height:50px!important}.label{margin-top:9px!important}input,select{min-height:44px!important}.calculatorScroll{padding-bottom:60px!important}}
+@media (max-width:370px){.notesModalGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.page2Title{font-size:20px!important}}
 
 </style>
 </head>
